@@ -1,0 +1,28 @@
+:host {
+    --axi-face-size: 48px;
+    --axi-face-bg: transparent;
+    --axi-face-text: #0f172a;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    color: var(--axi-face-text);
+}
+
+.root {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.frame {
+    width: var(--axi-face-size);
+    height: var(--axi-face-size);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}

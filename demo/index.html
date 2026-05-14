@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AxiFace Demo</title>
+  <script type="module" src="../src/axi-face.mjs"></script>
+  <style>
+    body {
+      margin: 2rem;
+      font-family: Inter, system-ui, sans-serif;
+      color: #0f172a;
+      background: #f8fafc;
+    }
+    main {
+      display: grid;
+      gap: 1.5rem;
+      max-width: 900px;
+    }
+    section {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      border: 1px solid #dbe3ef;
+      border-radius: 12px;
+      background: white;
+    }
+    button {
+      padding: 0.55rem 0.8rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>AxiFace Demo</h1>
+
+    <section>
+      <axi-face src="../packs/robot-soft/neutral.svg" size="64"></axi-face>
+      <span>Static SVG source</span>
+    </section>
+
+    <section>
+      <axi-face
+        agent-id="meeting-analyst"
+        pack-src="../packs/robot-soft/manifest.json"
+        emotion="thinking"
+        thought="Checking the transcript..."
+        thought-mode="bubble"
+        size="72"
+        listen>
+      </axi-face>
+      <button id="happy">Send happy command</button>
+      <button id="broadcast">Broadcast pulse</button>
+    </section>
+
+    <section>
+      <axi-face generated seed="demo-agent" emotion="neutral" thought="Generated face" thought-mode="caption" size="80"></axi-face>
+      <span>Generated deterministic face</span>
+    </section>
+  </main>
+
+  <script type="module">
+    document.querySelector('#happy').addEventListener('click', () => {
+      window.dispatchEvent(new CustomEvent('axi-face:command', {
+        detail: {
+          agentId: 'meeting-analyst',
+          command: 'setEmotion',
+          emotion: 'happy'
+        }
+      }));
+    });
+
+    document.querySelector('#broadcast').addEventListener('click', () => {
+      window.dispatchEvent(new CustomEvent('axi-face:command', {
+        detail: {
+          broadcast: true,
+          command: 'pulse',
+          duration: 700
+        }
+      }));
+    });
+  </script>
+</body>
+</html>

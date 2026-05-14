@@ -1,0 +1,22 @@
+{
+  "name": "@axiologic/axi-face",
+  "version": "0.1.0",
+  "description": "Small framework-free Web Component for simple expressive SVG agent faces.",
+  "type": "module",
+  "main": "src/axi-face.mjs",
+  "exports": {
+    ".": "./src/axi-face.mjs"
+  },
+  "scripts": {
+    "check": "node --check src/*.mjs",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "keywords": [
+    "web-component",
+    "svg",
+    "avatar",
+    "agent",
+    "ai"
+  ],
+  "license": "MIT"
+}
