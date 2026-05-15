@@ -67,6 +67,12 @@ img,
     object-fit: contain;
 }
 
+.inline-svg [data-axi-part] {
+    transition:
+        transform 160ms ease,
+        opacity 160ms ease;
+}
+
 .thought {
     max-width: min(220px, 45vw);
     font-size: 0.75rem;

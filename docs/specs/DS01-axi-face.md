@@ -86,7 +86,9 @@ Supported modes are:
 - `event-driven`
 - `autonomous`
 
-`static` is the default mode and does not attach a global command listener. `controlled` is intended for direct JavaScript API calls. `event-driven` attaches the `axi-face:command` window listener without requiring the `listen` attribute. `autonomous` keeps local rendering and animation state isolated and does not attach a global command listener.
+`static` is the default mode and does not attach a global command listener. `controlled` is intended for direct JavaScript API calls. `event-driven` attaches the `axi-face:command` window listener without requiring the `listen` attribute.
+
+`autonomous` keeps local rendering and animation state isolated and does not attach a global command listener. It starts per-instance blink and idle pulse timers only when animation is enabled. Timer jitter is deterministic from `agent-id` and `seed` so multiple instances do not animate in lockstep. Autonomous timers must stop on disconnect, `destroy()`, mode changes, or while `speaking` is active.
 
 Supported themes are:
 
@@ -102,7 +104,28 @@ The default asset mode is `img`. In this mode, SVG is rendered as an external im
 
 `asset-mode="inline"` may load and insert SVG into Shadow DOM only after sanitization. Inline SVG must reject script elements, unsupported embedded content, inline event handlers, style imports, and external or unsafe resource URLs.
 
+Inline controllable SVGs may expose these standard parts:
+
+- `left-eye`
+- `right-eye`
+- `mouth`
+- `brow-left`
+- `brow-right`
+- `glow`
+- `symbol`
+
+When those parts exist, AxiFace applies emotion changes through DOM updates on the sanitized inline SVG. If a part is missing, the component must degrade cleanly and keep the existing frame/class behavior.
+
 Asset packs are JSON manifests with `defaultEmotion` and an `emotions` map. Asset URLs resolve relative to `pack-src`. If a requested emotion is unavailable, the component falls back to `neutral`.
+
+Included internal asset packs are:
+
+- `robot-soft`
+- `robot-minimal`
+- `sketch-simple`
+- `emoji-simple`
+
+Each pack must include SVG assets for every stable emotion.
 
 Generated faces must be deterministic for a given `seed`, `emotion`, `style`, `palette`, and `complexity`. Supported generated styles are `robot-soft`, `robot-minimal`, `sketch`, `emoji`, and `terminal`.
 

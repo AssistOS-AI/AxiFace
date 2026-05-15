@@ -138,3 +138,81 @@ test('destroy cancels queued asset updates', async () => {
 
     assert.equal(updateCalls, 0);
 });
+
+test('autonomous mode starts per-instance timers and clears them on destroy', async () => {
+    const originalSetTimeout = globalThis.setTimeout;
+    const originalClearTimeout = globalThis.clearTimeout;
+    const scheduled = [];
+    globalThis.setTimeout = (callback, delay) => {
+        const timer = { callback, delay, cleared: false };
+        scheduled.push(timer);
+        return timer;
+    };
+    globalThis.clearTimeout = (timer) => {
+        if (timer) timer.cleared = true;
+    };
+    globalThis.window = {
+        addEventListener() {},
+        removeEventListener() {}
+    };
+
+    try {
+        const { AxiFaceElement } = await import('../src/axi-face-element.mjs');
+        const first = new AxiFaceElement();
+        first.setAttribute('agent-id', 'agent-a');
+        first.setAttribute('mode', 'autonomous');
+        first.connectedCallback();
+
+        const second = new AxiFaceElement();
+        second.setAttribute('agent-id', 'agent-b');
+        second.setAttribute('mode', 'autonomous');
+        second.connectedCallback();
+
+        assert.equal(first.autonomousTimers.size, 2);
+        assert.equal(second.autonomousTimers.size, 2);
+        assert.notEqual(scheduled[0].delay, scheduled[2].delay);
+
+        first.destroy();
+        assert.equal(first.autonomousTimers.size, 0);
+        assert.equal(scheduled[0].cleared, true);
+        assert.equal(scheduled[1].cleared, true);
+
+        second.destroy();
+    } finally {
+        globalThis.setTimeout = originalSetTimeout;
+        globalThis.clearTimeout = originalClearTimeout;
+    }
+});
+
+test('autonomous mode does not keep timers while speaking', async () => {
+    const originalSetTimeout = globalThis.setTimeout;
+    const originalClearTimeout = globalThis.clearTimeout;
+    globalThis.setTimeout = (callback, delay) => ({ callback, delay, cleared: false });
+    globalThis.clearTimeout = (timer) => {
+        if (timer) timer.cleared = true;
+    };
+    globalThis.window = {
+        addEventListener() {},
+        removeEventListener() {}
+    };
+
+    try {
+        const { AxiFaceElement } = await import('../src/axi-face-element.mjs');
+        const element = new AxiFaceElement();
+        element.setAttribute('mode', 'autonomous');
+        element.connectedCallback();
+
+        assert.equal(element.autonomousTimers.size, 2);
+        element.speakStart();
+        assert.equal(element.machine.state.speaking, true);
+        assert.equal(element.autonomousTimers.size, 0);
+
+        element.speakEnd();
+        assert.equal(element.machine.state.speaking, false);
+        assert.equal(element.autonomousTimers.size, 2);
+        element.destroy();
+    } finally {
+        globalThis.setTimeout = originalSetTimeout;
+        globalThis.clearTimeout = originalClearTimeout;
+    }
+});

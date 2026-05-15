@@ -214,6 +214,22 @@
       line-height: 1.45;
     }
 
+    .pack-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(92px, 1fr));
+      gap: 12px;
+      align-items: start;
+    }
+
+    .pack-tile {
+      display: grid;
+      justify-items: center;
+      gap: 8px;
+      min-width: 0;
+      color: #526071;
+      font-size: 0.78rem;
+    }
+
     @media (max-width: 860px) {
       header,
       .layout,
@@ -228,6 +244,10 @@
       .example,
       .example.full {
         grid-template-columns: 1fr;
+      }
+
+      .pack-grid {
+        grid-template-columns: repeat(2, minmax(92px, 1fr));
       }
     }
   </style>
@@ -401,6 +421,40 @@
           <div class="example-copy">
             <h3>Inline SVG mode</h3>
             <code>asset-mode="inline" src="../packs/robot-soft/happy.svg"</code>
+          </div>
+        </article>
+
+        <article class="example full">
+          <div class="pack-grid">
+            <div class="pack-tile">
+              <axi-face pack-src="../packs/robot-soft/manifest.json" emotion="happy" size="72"></axi-face>
+              <span>robot-soft</span>
+            </div>
+            <div class="pack-tile">
+              <axi-face pack-src="../packs/robot-minimal/manifest.json" emotion="thinking" size="72"></axi-face>
+              <span>robot-minimal</span>
+            </div>
+            <div class="pack-tile">
+              <axi-face pack-src="../packs/sketch-simple/manifest.json" emotion="confused" size="72"></axi-face>
+              <span>sketch-simple</span>
+            </div>
+            <div class="pack-tile">
+              <axi-face pack-src="../packs/emoji-simple/manifest.json" emotion="amused" size="72"></axi-face>
+              <span>emoji-simple</span>
+            </div>
+          </div>
+          <div class="example-copy">
+            <h3>Standard asset packs</h3>
+            <code>robot-soft, robot-minimal, sketch-simple, emoji-simple</code>
+          </div>
+        </article>
+
+        <article class="example full">
+          <axi-face mode="autonomous" asset-mode="inline" src="../packs/robot-soft/neutral.svg" agent-id="auto-a" emotion="neutral" thought="auto-a" thought-mode="caption" size="68"></axi-face>
+          <axi-face mode="autonomous" asset-mode="inline" src="../packs/robot-minimal/neutral.svg" agent-id="auto-b" emotion="neutral" thought="auto-b" thought-mode="caption" size="68"></axi-face>
+          <div class="example-copy">
+            <h3>Autonomous inline instances</h3>
+            <code>mode="autonomous" asset-mode="inline" uses per-instance blink and idle pulse timers.</code>
           </div>
         </article>
 

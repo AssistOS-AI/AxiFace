@@ -65,6 +65,27 @@ function eyesMarkup(emotion) {
     }
 }
 
+function browsMarkup(emotion) {
+    switch (normalizeEmotion(emotion)) {
+    case 'confused':
+        return '<g data-axi-part="brow-left"><path d="M36 42 L52 39" /></g><g data-axi-part="brow-right"><path d="M76 39 L92 43" /></g>';
+    case 'concerned':
+    case 'alert':
+        return '<g data-axi-part="brow-left"><path d="M36 41 L52 46" /></g><g data-axi-part="brow-right"><path d="M76 46 L92 41" /></g>';
+    case 'happy':
+    case 'amused':
+        return '<g data-axi-part="brow-left"><path d="M36 42 Q44 37 52 42" /></g><g data-axi-part="brow-right"><path d="M76 42 Q84 37 92 42" /></g>';
+    case 'sleepy':
+        return '<g data-axi-part="brow-left"><path d="M36 47 H52" /></g><g data-axi-part="brow-right"><path d="M76 47 H92" /></g>';
+    default:
+        return '<g data-axi-part="brow-left"><path d="M36 43 H52" /></g><g data-axi-part="brow-right"><path d="M76 43 H92" /></g>';
+    }
+}
+
+function symbolMarkup(fill = 'currentColor') {
+    return `<text data-axi-part="symbol" x="64" y="31" text-anchor="middle" font-family="ui-sans-serif, system-ui, sans-serif" font-size="16" font-weight="800" fill="${fill}" stroke="none" opacity="0"></text>`;
+}
+
 function robotSoftFace({ emotion, palette, hash, complexity }) {
     const background = palette[0];
     const accent = pick(palette.slice(1), hash);
@@ -78,9 +99,11 @@ function robotSoftFace({ emotion, palette, hash, complexity }) {
         : '';
 
     return `<rect width="128" height="128" rx="32" fill="${background}"/>
+  ${symbolMarkup(ink)}
   <g fill="none" stroke="${ink}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
     ${antenna}
     <rect data-axi-part="head" x="25" y="30" width="78" height="74" rx="24" fill="${accent}" stroke="${ink}"/>
+    ${browsMarkup(emotion)}
     <g fill="${ink}">${eyesMarkup(emotion)}</g>
     <g data-axi-part="mouth" fill="none">${mouthPath(emotion)}</g>
     ${cheek}
@@ -97,9 +120,11 @@ function robotMinimalFace({ emotion, palette, complexity }) {
         : '';
 
     return `<rect width="128" height="128" rx="18" fill="${background}"/>
+  ${symbolMarkup(ink)}
   <g fill="none" stroke="${ink}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
     <rect data-axi-part="head" x="28" y="35" width="72" height="64" rx="14" fill="${accent}" stroke="${ink}"/>
     ${detail}
+    ${browsMarkup(emotion)}
     <g fill="${ink}">${eyesMarkup(emotion)}</g>
     <g data-axi-part="mouth" fill="none">${mouthPath(emotion)}</g>
   </g>`;
@@ -114,8 +139,10 @@ function sketchFace({ emotion, palette, hash, complexity }) {
         : '';
 
     return `<rect width="128" height="128" rx="28" fill="${paper}"/>
+  ${symbolMarkup(ink)}
   <g fill="none" stroke="${ink}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
     <path data-axi-part="head" d="M32 ${38 + wobble} C48 27 84 28 98 43 C108 60 103 91 88 101 C72 112 43 105 31 91 C20 76 22 51 32 ${38 + wobble}Z" fill="none"/>
+    ${browsMarkup(emotion)}
     <g fill="${ink}">${eyesMarkup(emotion)}</g>
     <g data-axi-part="mouth" fill="none">${mouthPath(emotion)}</g>
     ${hatch}
@@ -133,7 +160,9 @@ function emojiFace({ emotion, palette, complexity }) {
     return `<rect width="128" height="128" rx="32" fill="${background}"/>
   <circle data-axi-part="head" cx="64" cy="64" r="44" fill="${face}" stroke="${ink}" stroke-width="5"/>
   ${highlight}
+  ${symbolMarkup(ink)}
   <g fill="${ink}" stroke="${ink}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    ${browsMarkup(emotion)}
     ${eyesMarkup(emotion)}
     <g data-axi-part="mouth" fill="none">${mouthPath(emotion)}</g>
   </g>`;
@@ -151,9 +180,11 @@ function terminalFace({ emotion, palette, hash, complexity }) {
         : '';
 
     return `<rect width="128" height="128" rx="8" fill="${background}"/>
+  ${symbolMarkup(ink)}
   <g fill="none" stroke="${accent}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
     <rect data-axi-part="head" x="20" y="28" width="88" height="76" rx="6" fill="#052e16" stroke="${accent}"/>
     ${scan}
+    ${browsMarkup(emotion)}
     <g fill="${ink}" stroke="${ink}">${eyesMarkup(emotion)}</g>
     <g data-axi-part="mouth" stroke="${ink}" fill="none">${mouthPath(emotion)}</g>
     ${cursor}

@@ -1,5 +1,6 @@
 import { loadInlineSvg, loadPackManifest, getPackEmotionSource, resolvePackAssetUrl } from './asset-loader.mjs';
 import { generateFaceDataUrl, generateFaceSvg } from './generated-faces.mjs';
+import { applyInlineSvgBlink, applyInlineSvgExpression } from './svg-controller.mjs';
 import { renderThought } from './thought-renderer.mjs';
 import {
     AxiFaceState,
@@ -13,6 +14,17 @@ import {
 } from './state-machine.mjs';
 
 const DEFAULT_STYLES_URL = new URL('./default-styles.css', import.meta.url).href;
+const AUTONOMOUS_BLINK_BASE_MS = 2400;
+const AUTONOMOUS_IDLE_BASE_MS = 5200;
+
+function hashString(value) {
+    let hash = 2166136261;
+    for (const char of String(value || 'axi-face')) {
+        hash ^= char.charCodeAt(0);
+        hash = Math.imul(hash, 16777619);
+    }
+    return hash >>> 0;
+}
 
 export class AxiFaceElement extends HTMLElement {
     static observedAttributes = [
@@ -42,7 +54,10 @@ export class AxiFaceElement extends HTMLElement {
         this.machine = new AxiFaceState();
         this.packManifest = null;
         this.loadedPackSrc = '';
+        this.inlineAssetSrc = '';
         this.timers = new Set();
+        this.autonomousTimers = new Set();
+        this.autonomousHash = 0;
         this.assetUpdateSeq = 0;
         this.assetUpdateQueued = false;
         this.destroyed = false;
@@ -58,6 +73,7 @@ export class AxiFaceElement extends HTMLElement {
         this.shadowRoot.removeEventListener('click', this.handleClick);
         this.shadowRoot.addEventListener('click', this.handleClick);
         this.requestAssetUpdate();
+        this.configureAutonomousBehavior();
         this.emit('axi-face:ready', { state: this.machine.snapshot });
     }
 
@@ -70,6 +86,7 @@ export class AxiFaceElement extends HTMLElement {
         if (!this.isConnected) return;
         this.syncFromAttributes();
         this.configureGlobalListener();
+        this.configureAutonomousBehavior();
         if (this.isAssetAttribute(name)) {
             this.requestAssetUpdate();
         } else {
@@ -94,6 +111,7 @@ export class AxiFaceElement extends HTMLElement {
         state.assetMode = String(this.getAttribute('asset-mode') || 'img').trim() === 'inline' ? 'inline' : 'img';
         state.generated = this.hasAttribute('generated');
         state.animated = this.hasAttribute('animated') ? normalizeBooleanAttribute(this.getAttribute('animated')) : true;
+        this.autonomousHash = hashString(`${state.agentId}:${this.getAttribute('seed') || ''}`);
     }
 
     configureGlobalListener() {
@@ -131,6 +149,48 @@ export class AxiFaceElement extends HTMLElement {
         });
     }
 
+    getInlineAssetHost() {
+        return this.shadowRoot.querySelector('[data-role="asset"]');
+    }
+
+    applyInlineExpression() {
+        if (this.machine.state.assetMode !== 'inline') return false;
+        const host = this.getInlineAssetHost();
+        if (!host) return false;
+        return applyInlineSvgExpression(host, this.machine.state.emotion);
+    }
+
+    canUpdateInlineExpressionOnly() {
+        return this.machine.state.assetMode === 'inline'
+            && this.machine.state.src
+            && this.inlineAssetSrc === this.machine.state.src
+            && Boolean(this.getInlineAssetHost()?.querySelector?.('svg'));
+    }
+
+    updateThoughtRender() {
+        const root = this.shadowRoot.querySelector('.root');
+        if (!root?.insertAdjacentHTML) {
+            this.render();
+            return;
+        }
+        root.querySelectorAll?.('.thought')?.forEach((node) => node.remove());
+        root.insertAdjacentHTML('beforeend', renderThought(this.machine.state.visibleThought, this.machine.state.thoughtMode));
+    }
+
+    updateRootClasses() {
+        const root = this.shadowRoot.querySelector('.root');
+        if (!root) return;
+        const state = this.machine.snapshot;
+        const animationClass = state.animated ? 'animated' : '';
+        root.className = [
+            'root',
+            animationClass,
+            `emotion-${state.emotion}`,
+            `mode-${state.mode}`,
+            `theme-${state.theme}`
+        ].filter(Boolean).join(' ');
+    }
+
     async updateAsset() {
         if (this.destroyed) return;
         const updateSeq = ++this.assetUpdateSeq;
@@ -153,10 +213,14 @@ export class AxiFaceElement extends HTMLElement {
             if (this.machine.state.assetMode === 'inline' && this.machine.state.src) {
                 const svg = await loadInlineSvg(this.machine.state.src);
                 if (this.destroyed || updateSeq !== this.assetUpdateSeq) return;
-                const host = this.shadowRoot.querySelector('[data-role="asset"]');
+                const host = this.getInlineAssetHost();
                 if (host) {
                     host.innerHTML = `<span class="inline-svg">${svg}</span>`;
+                    this.inlineAssetSrc = this.machine.state.src;
+                    this.applyInlineExpression();
                 }
+            } else {
+                this.inlineAssetSrc = '';
             }
             this.emit('axi-face:loaded', { state: this.machine.snapshot });
         } catch (error) {
@@ -227,6 +291,11 @@ export class AxiFaceElement extends HTMLElement {
         if (previous !== this.machine.state.emotion) {
             this.emit('axi-face:emotion-changed', { state: this.machine.snapshot });
         }
+        if (!this.machine.state.packSrc && this.canUpdateInlineExpressionOnly()) {
+            this.updateRootClasses();
+            this.applyInlineExpression();
+            return;
+        }
         this.requestAssetUpdate();
     }
 
@@ -240,13 +309,14 @@ export class AxiFaceElement extends HTMLElement {
         const packSrc = typeof pack === 'string' ? pack : pack?.src || pack?.packSrc || '';
         this.machine.setPack(packSrc);
         if (packSrc) this.setAttribute('pack-src', packSrc);
+        this.inlineAssetSrc = '';
         this.requestAssetUpdate();
     }
 
     showThought(text, options = {}) {
         this.machine.showThought(text, options);
         this.emit('axi-face:thought-shown', { text: String(text || ''), state: this.machine.snapshot });
-        this.render();
+        this.updateThoughtRender();
         if (options.duration) {
             const timer = setTimeout(() => {
                 this.timers.delete(timer);
@@ -258,25 +328,43 @@ export class AxiFaceElement extends HTMLElement {
 
     hideThought() {
         this.machine.hideThought();
-        this.render();
+        this.updateThoughtRender();
     }
 
     think(text = '', options = {}) {
         this.machine.think(text, options);
         this.emit('axi-face:emotion-changed', { state: this.machine.snapshot });
         if (text) this.emit('axi-face:thought-shown', { text, state: this.machine.snapshot });
+        if (!this.machine.state.packSrc && this.canUpdateInlineExpressionOnly()) {
+            this.updateRootClasses();
+            this.updateThoughtRender();
+            this.applyInlineExpression();
+            return;
+        }
         this.requestAssetUpdate();
     }
 
     speakStart(options = {}) {
+        this.clearAutonomousTimers();
         this.machine.speakStart(options);
         this.emit('axi-face:emotion-changed', { state: this.machine.snapshot });
+        if (!this.machine.state.packSrc && this.canUpdateInlineExpressionOnly()) {
+            this.updateRootClasses();
+            this.applyInlineExpression();
+            return;
+        }
         this.requestAssetUpdate();
     }
 
     speakEnd() {
         this.machine.speakEnd();
         this.emit('axi-face:emotion-changed', { state: this.machine.snapshot });
+        this.configureAutonomousBehavior();
+        if (!this.machine.state.packSrc && this.canUpdateInlineExpressionOnly()) {
+            this.updateRootClasses();
+            this.applyInlineExpression();
+            return;
+        }
         this.requestAssetUpdate();
     }
 
@@ -293,13 +381,79 @@ export class AxiFaceElement extends HTMLElement {
 
     reset() {
         this.machine.reset();
+        this.configureAutonomousBehavior();
         this.requestAssetUpdate();
+    }
+
+    getAutonomousDelay(base, spread, salt = 0) {
+        return base + ((this.autonomousHash + salt) % spread);
+    }
+
+    isAutonomousActive() {
+        return this.machine.state.mode === 'autonomous'
+            && this.machine.state.animated
+            && !this.machine.state.speaking
+            && !this.destroyed;
+    }
+
+    addAutonomousTimer(callback, delay) {
+        const timer = setTimeout(() => {
+            this.autonomousTimers.delete(timer);
+            this.timers.delete(timer);
+            callback();
+        }, delay);
+        this.autonomousTimers.add(timer);
+        this.timers.add(timer);
+        return timer;
+    }
+
+    clearAutonomousTimers() {
+        for (const timer of this.autonomousTimers) {
+            clearTimeout(timer);
+            this.timers.delete(timer);
+        }
+        this.autonomousTimers.clear();
+    }
+
+    configureAutonomousBehavior() {
+        this.clearAutonomousTimers();
+        if (!this.isAutonomousActive()) return;
+        this.scheduleAutonomousBlink();
+        this.scheduleAutonomousIdlePulse();
+    }
+
+    scheduleAutonomousBlink() {
+        if (!this.isAutonomousActive()) return;
+        const delay = this.getAutonomousDelay(AUTONOMOUS_BLINK_BASE_MS, 1700, 41);
+        this.addAutonomousTimer(() => {
+            if (!this.isAutonomousActive()) return;
+            if (this.machine.state.assetMode === 'inline') {
+                const host = this.getInlineAssetHost();
+                applyInlineSvgBlink(host, true);
+                this.addAutonomousTimer(() => {
+                    if (!this.isAutonomousActive()) return;
+                    this.applyInlineExpression();
+                }, 120);
+            }
+            this.scheduleAutonomousBlink();
+        }, delay);
+    }
+
+    scheduleAutonomousIdlePulse() {
+        if (!this.isAutonomousActive()) return;
+        const delay = this.getAutonomousDelay(AUTONOMOUS_IDLE_BASE_MS, 2400, 211);
+        this.addAutonomousTimer(() => {
+            if (!this.isAutonomousActive()) return;
+            this.pulse({ duration: 520 });
+            this.scheduleAutonomousIdlePulse();
+        }, delay);
     }
 
     destroy() {
         this.destroyed = true;
         this.assetUpdateSeq += 1;
         this.assetUpdateQueued = false;
+        this.clearAutonomousTimers();
         window.removeEventListener('axi-face:command', this.handleCommand);
         this.shadowRoot?.removeEventListener?.('click', this.handleClick);
         for (const timer of this.timers) {

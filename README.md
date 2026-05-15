@@ -63,6 +63,31 @@ With an asset pack:
 
 `mode="event-driven"` makes the component listen for `axi-face:command` without also requiring the `listen` attribute. The supported modes are `static`, `controlled`, `event-driven`, and `autonomous`. The supported themes are `auto`, `light`, and `dark`.
 
+With autonomous local behavior:
+
+```html
+<axi-face
+  mode="autonomous"
+  asset-mode="inline"
+  src="/packs/robot-soft/neutral.svg"
+  agent-id="assistant">
+</axi-face>
+```
+
+`mode="autonomous"` uses per-instance timers for blink and idle pulse behavior. Timers are deterministic from `agent-id`/`seed`, cleaned up on disconnect, and paused while the face is speaking.
+
+With a controllable inline SVG:
+
+```html
+<axi-face
+  src="/avatars/robot-layered.svg"
+  asset-mode="inline"
+  emotion="happy">
+</axi-face>
+```
+
+Inline SVGs may expose `data-axi-part` markers such as `left-eye`, `right-eye`, `mouth`, `brow-left`, `brow-right`, `glow`, and `symbol`. AxiFace applies expression updates to those parts after the SVG passes sanitizer checks.
+
 ## JavaScript API
 
 ```js
@@ -136,6 +161,17 @@ Component events:
 ## Security
 
 The default SVG mode is `asset-mode="img"`, which renders the source through an image element. Inline mode is stricter and sanitizes loaded SVG text before inserting it into Shadow DOM. Inline SVG rejects script elements, unsupported embedded content, inline event handlers, style imports, and external or unsafe resource URLs.
+
+## Included Asset Packs
+
+The package includes original internal SVG packs:
+
+- `packs/robot-soft`
+- `packs/robot-minimal`
+- `packs/sketch-simple`
+- `packs/emoji-simple`
+
+Each pack has a manifest and SVGs for `neutral`, `idle`, `listening`, `thinking`, `speaking`, `happy`, `amused`, `confused`, `concerned`, `alert`, and `sleepy`.
 
 ## Asset Sources
 

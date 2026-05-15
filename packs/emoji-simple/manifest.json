@@ -1,0 +1,20 @@
+{
+  "id": "emoji-simple",
+  "version": "1.0.0",
+  "type": "emotion-set",
+  "license": "internal",
+  "defaultEmotion": "neutral",
+  "emotions": {
+    "neutral": "neutral.svg",
+    "idle": "idle.svg",
+    "listening": "listening.svg",
+    "thinking": "thinking.svg",
+    "speaking": "speaking.svg",
+    "happy": "happy.svg",
+    "amused": "amused.svg",
+    "confused": "confused.svg",
+    "concerned": "concerned.svg",
+    "alert": "alert.svg",
+    "sleepy": "sleepy.svg"
+  }
+}

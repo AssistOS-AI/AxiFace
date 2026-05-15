@@ -1,13 +1,11 @@
 <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AxiFace alert">
-  <rect width="128" height="128" rx="32" fill="#f8fafc"/>
+  <rect width="128" height="128" rx="18" fill="#f8fafc"/>
   <text data-axi-part="symbol" x="64" y="31" text-anchor="middle" font-family="ui-sans-serif, system-ui, sans-serif" font-size="16" font-weight="800" fill="#0f172a" stroke="none" opacity="0"></text>
-  <g fill="none" stroke="#0f172a" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
-    <path data-axi-part="antenna" d="M64 25 V13" /><circle cx="64" cy="10" r="4" fill="#38bdf8" />
-    <rect data-axi-part="head" x="25" y="30" width="78" height="74" rx="24" fill="#38bdf8" stroke="#0f172a"/>
+  <g fill="none" stroke="#0f172a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <rect data-axi-part="head" x="28" y="35" width="72" height="64" rx="14" fill="#475569" stroke="#0f172a"/>
+    <path data-axi-part="detail" d="M43 38 H85" opacity="0.45"/>
     <g data-axi-part="brow-left"><path d="M36 41 L52 46" /></g><g data-axi-part="brow-right"><path d="M76 46 L92 41" /></g>
     <g fill="#0f172a"><g data-axi-part="left-eye"><circle cx="45" cy="54" r="7" /></g><g data-axi-part="right-eye"><circle cx="83" cy="54" r="7" /></g></g>
     <g data-axi-part="mouth" fill="none"><path d="M47 83 Q64 70 81 83" /></g>
-    <circle cx="37" cy="70" r="4" fill="#38bdf8" stroke="none" opacity="0.55"/><circle cx="91" cy="70" r="4" fill="#38bdf8" stroke="none" opacity="0.55"/>
-    <circle data-axi-part="glow" cx="96" cy="34" r="6" fill="#38bdf8" stroke="none"/>
   </g>
 </svg>

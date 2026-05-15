@@ -1,0 +1,11 @@
+<svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AxiFace sleepy">
+  <rect width="128" height="128" rx="32" fill="#fff7ed"/>
+  <circle data-axi-part="head" cx="64" cy="64" r="44" fill="#facc15" stroke="#422006" stroke-width="5"/>
+  <ellipse data-axi-part="highlight" cx="48" cy="39" rx="13" ry="7" fill="#ffffff" opacity="0.42"/>
+  <text data-axi-part="symbol" x="64" y="31" text-anchor="middle" font-family="ui-sans-serif, system-ui, sans-serif" font-size="16" font-weight="800" fill="#422006" stroke="none" opacity="0"></text>
+  <g fill="#422006" stroke="#422006" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <g data-axi-part="brow-left"><path d="M36 47 H52" /></g><g data-axi-part="brow-right"><path d="M76 47 H92" /></g>
+    <g data-axi-part="left-eye"><path d="M37 55 H52" /></g><g data-axi-part="right-eye"><path d="M76 55 H91" /></g>
+    <g data-axi-part="mouth" fill="none"><path d="M48 78 H80" /></g>
+  </g>
+</svg>

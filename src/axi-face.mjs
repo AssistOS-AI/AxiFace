@@ -9,4 +9,5 @@ export * from './asset-loader.mjs';
 export * from './generated-face-config.mjs';
 export * from './generated-faces.mjs';
 export * from './state-machine.mjs';
+export * from './svg-controller.mjs';
 export * from './thought-renderer.mjs';
