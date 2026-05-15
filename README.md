@@ -54,10 +54,14 @@ With an asset pack:
   agent-id="chat-agent"
   pack-src="/packs/robot-soft/manifest.json"
   emotion="listening"
+  mode="event-driven"
+  theme="auto"
   thought-mode="bubble"
-  listen>
+  >
 </axi-face>
 ```
+
+`mode="event-driven"` makes the component listen for `axi-face:command` without also requiring the `listen` attribute. The supported modes are `static`, `controlled`, `event-driven`, and `autonomous`. The supported themes are `auto`, `light`, and `dark`.
 
 ## JavaScript API
 
@@ -70,6 +74,23 @@ face.speakStart();
 face.speakEnd();
 face.setSource("/avatars/robot-happy.svg");
 face.reset();
+```
+
+Generated palettes can be extended without editing AxiFace internals:
+
+```js
+import { registerGeneratedFacePalette } from "@axiologic/axi-face";
+
+registerGeneratedFacePalette("brand", [
+  "#101010",
+  "#ff0066",
+  "#f8fafc",
+  "#00d1ff"
+]);
+```
+
+```html
+<axi-face generated palette="brand"></axi-face>
 ```
 
 Supported methods:
@@ -88,7 +109,7 @@ Supported methods:
 
 ## Events
 
-When `listen` is present, the component listens for `axi-face:command` on `window`:
+When `listen` is present, or when `mode="event-driven"` is set, the component listens for `axi-face:command` on `window`:
 
 ```js
 window.dispatchEvent(new CustomEvent("axi-face:command", {
@@ -114,7 +135,7 @@ Component events:
 
 ## Security
 
-The default SVG mode is `asset-mode="img"`, which renders the source through an image element. Inline mode is stricter and sanitizes loaded SVG text before inserting it into Shadow DOM. Inline SVG rejects script elements, inline event handlers, and external or unsafe resource URLs.
+The default SVG mode is `asset-mode="img"`, which renders the source through an image element. Inline mode is stricter and sanitizes loaded SVG text before inserting it into Shadow DOM. Inline SVG rejects script elements, unsupported embedded content, inline event handlers, style imports, and external or unsafe resource URLs.
 
 ## Asset Sources
 

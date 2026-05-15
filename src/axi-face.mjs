@@ -6,6 +6,7 @@ if (typeof customElements !== 'undefined' && !customElements.get('axi-face')) {
 
 export { AxiFaceElement };
 export * from './asset-loader.mjs';
+export * from './generated-face-config.mjs';
 export * from './generated-faces.mjs';
 export * from './state-machine.mjs';
 export * from './thought-renderer.mjs';

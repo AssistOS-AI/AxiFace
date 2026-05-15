@@ -77,17 +77,40 @@ Thought modes are:
 
 Thought text must be treated as a visual activity hint, not as real model reasoning.
 
+## Modes And Themes
+
+Supported modes are:
+
+- `static`
+- `controlled`
+- `event-driven`
+- `autonomous`
+
+`static` is the default mode and does not attach a global command listener. `controlled` is intended for direct JavaScript API calls. `event-driven` attaches the `axi-face:command` window listener without requiring the `listen` attribute. `autonomous` keeps local rendering and animation state isolated and does not attach a global command listener.
+
+Supported themes are:
+
+- `auto`
+- `light`
+- `dark`
+
+`auto` follows the browser color scheme for component text and thought rendering.
+
 ## Assets
 
 The default asset mode is `img`. In this mode, SVG is rendered as an external image.
 
-`asset-mode="inline"` may load and insert SVG into Shadow DOM only after sanitization. Inline SVG must reject script elements, inline event handlers, and external or unsafe resource URLs.
+`asset-mode="inline"` may load and insert SVG into Shadow DOM only after sanitization. Inline SVG must reject script elements, unsupported embedded content, inline event handlers, style imports, and external or unsafe resource URLs.
 
 Asset packs are JSON manifests with `defaultEmotion` and an `emotions` map. Asset URLs resolve relative to `pack-src`. If a requested emotion is unavailable, the component falls back to `neutral`.
 
+Generated faces must be deterministic for a given `seed`, `emotion`, `style`, `palette`, and `complexity`. Supported generated styles are `robot-soft`, `robot-minimal`, `sketch`, `emoji`, and `terminal`.
+
+Generated face palettes live in `generated-face-config.mjs`, not inside the renderer implementation. Consumers may register additional named palettes through `registerGeneratedFacePalette(name, colors)` and then use them through the `palette` attribute.
+
 ## Events
 
-When `listen` is present, the component listens to `window` event `axi-face:command`. It handles commands only when `detail.agentId` matches the component `agent-id`, or when `detail.broadcast === true`.
+When `listen` is present, or when `mode="event-driven"` is set, the component listens to `window` event `axi-face:command`. It handles commands only when `detail.agentId` matches the component `agent-id`, or when `detail.broadcast === true`.
 
 Supported commands:
 

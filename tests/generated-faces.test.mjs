@@ -1,6 +1,12 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
+import {
+    getGeneratedFacePalette,
+    listGeneratedFacePalettes,
+    registerGeneratedFacePalette,
+    unregisterGeneratedFacePalette
+} from '../src/generated-face-config.mjs';
 import { generateFaceDataUrl, generateFaceSvg } from '../src/generated-faces.mjs';
 
 test('generated faces are deterministic for seed and emotion', () => {
@@ -13,4 +19,28 @@ test('generated faces produce SVG data URLs', () => {
     const url = generateFaceDataUrl({ seed: 'agent', emotion: 'happy' });
     assert.equal(url.startsWith('data:image/svg+xml;charset=utf-8,'), true);
     assert.equal(decodeURIComponent(url).includes('<svg'), true);
+});
+
+test('generated face styles and complexity affect the SVG output', () => {
+    const robot = generateFaceSvg({ seed: 'agent', emotion: 'neutral', style: 'robot-soft', complexity: 'low' });
+    const terminal = generateFaceSvg({ seed: 'agent', emotion: 'neutral', style: 'terminal', complexity: 'low' });
+    const detailed = generateFaceSvg({ seed: 'agent', emotion: 'neutral', style: 'robot-soft', complexity: 'high' });
+
+    assert.notEqual(robot, terminal);
+    assert.notEqual(robot, detailed);
+    assert.equal(terminal.includes('data-axi-part="head"'), true);
+});
+
+test('generated face palettes are configurable', () => {
+    registerGeneratedFacePalette('brand', ['#101010', '#ff0066', '#f8fafc', '#00d1ff']);
+
+    const palette = getGeneratedFacePalette('brand');
+    const svg = generateFaceSvg({ seed: 'brand-agent', emotion: 'happy', palette: 'brand' });
+    const palettes = listGeneratedFacePalettes();
+
+    assert.deepEqual([...palette], ['#101010', '#ff0066', '#f8fafc', '#00d1ff']);
+    assert.equal(svg.includes('#ff0066'), true);
+    assert.equal(Object.hasOwn(palettes, 'brand'), true);
+    assert.equal(unregisterGeneratedFacePalette('brand'), true);
+    assert.equal(Object.hasOwn(listGeneratedFacePalettes(), 'brand'), false);
 });

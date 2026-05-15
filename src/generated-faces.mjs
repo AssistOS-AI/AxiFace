@@ -1,10 +1,8 @@
 import { normalizeEmotion } from './state-machine.mjs';
-
-const PALETTES = Object.freeze({
-    default: ['#f8fafc', '#2563eb', '#0f172a', '#38bdf8'],
-    warm: ['#fff7ed', '#ea580c', '#431407', '#facc15'],
-    mono: ['#f8fafc', '#475569', '#0f172a', '#cbd5e1']
-});
+import {
+    GENERATED_FACE_STYLES,
+    getGeneratedFacePalette
+} from './generated-face-config.mjs';
 
 function hashString(value) {
     let hash = 2166136261;
@@ -17,6 +15,22 @@ function hashString(value) {
 
 function pick(list, index) {
     return list[index % list.length];
+}
+
+function normalizeStyle(value) {
+    const style = String(value || 'robot-soft').trim();
+    return GENERATED_FACE_STYLES.includes(style) ? style : 'robot-soft';
+}
+
+function normalizeComplexity(value) {
+    const raw = String(value || '').trim().toLowerCase();
+    if (!raw) return 0.7;
+    if (raw === 'low' || raw === 'minimal') return 0.35;
+    if (raw === 'medium' || raw === 'default') return 0.7;
+    if (raw === 'high' || raw === 'detailed') return 1;
+    const number = Number(raw);
+    if (!Number.isFinite(number)) return 0.7;
+    return Math.max(0, Math.min(1, number));
 }
 
 function mouthPath(emotion) {
@@ -38,42 +52,135 @@ function mouthPath(emotion) {
     }
 }
 
-function eyeMarkup(emotion) {
+function eyesMarkup(emotion) {
     switch (normalizeEmotion(emotion)) {
     case 'sleepy':
-        return '<path d="M37 55 H52" /><path d="M76 55 H91" />';
+        return '<g data-axi-part="left-eye"><path d="M37 55 H52" /></g><g data-axi-part="right-eye"><path d="M76 55 H91" /></g>';
     case 'thinking':
-        return '<circle cx="45" cy="56" r="5" /><circle cx="83" cy="54" r="5" />';
+        return '<g data-axi-part="left-eye"><circle cx="45" cy="56" r="5" /></g><g data-axi-part="right-eye"><circle cx="83" cy="54" r="5" /></g>';
     case 'alert':
-        return '<circle cx="45" cy="54" r="7" /><circle cx="83" cy="54" r="7" />';
+        return '<g data-axi-part="left-eye"><circle cx="45" cy="54" r="7" /></g><g data-axi-part="right-eye"><circle cx="83" cy="54" r="7" /></g>';
     default:
-        return '<circle cx="45" cy="55" r="6" /><circle cx="83" cy="55" r="6" />';
+        return '<g data-axi-part="left-eye"><circle cx="45" cy="55" r="6" /></g><g data-axi-part="right-eye"><circle cx="83" cy="55" r="6" /></g>';
     }
+}
+
+function robotSoftFace({ emotion, palette, hash, complexity }) {
+    const background = palette[0];
+    const accent = pick(palette.slice(1), hash);
+    const ink = palette[2];
+    const glow = palette[3] || accent;
+    const antenna = complexity >= 0.55 && (hash % 2) === 0
+        ? `<path data-axi-part="antenna" d="M64 25 V13" /><circle cx="64" cy="10" r="4" fill="${glow}" />`
+        : '';
+    const cheek = complexity >= 0.85
+        ? `<circle cx="37" cy="70" r="4" fill="${glow}" stroke="none" opacity="0.55"/><circle cx="91" cy="70" r="4" fill="${glow}" stroke="none" opacity="0.55"/>`
+        : '';
+
+    return `<rect width="128" height="128" rx="32" fill="${background}"/>
+  <g fill="none" stroke="${ink}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    ${antenna}
+    <rect data-axi-part="head" x="25" y="30" width="78" height="74" rx="24" fill="${accent}" stroke="${ink}"/>
+    <g fill="${ink}">${eyesMarkup(emotion)}</g>
+    <g data-axi-part="mouth" fill="none">${mouthPath(emotion)}</g>
+    ${cheek}
+    <circle data-axi-part="glow" cx="96" cy="34" r="6" fill="${glow}" stroke="none"/>
+  </g>`;
+}
+
+function robotMinimalFace({ emotion, palette, complexity }) {
+    const background = palette[0];
+    const accent = palette[1];
+    const ink = palette[2];
+    const detail = complexity >= 0.75
+        ? `<path data-axi-part="detail" d="M43 38 H85" opacity="0.45"/>`
+        : '';
+
+    return `<rect width="128" height="128" rx="18" fill="${background}"/>
+  <g fill="none" stroke="${ink}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <rect data-axi-part="head" x="28" y="35" width="72" height="64" rx="14" fill="${accent}" stroke="${ink}"/>
+    ${detail}
+    <g fill="${ink}">${eyesMarkup(emotion)}</g>
+    <g data-axi-part="mouth" fill="none">${mouthPath(emotion)}</g>
+  </g>`;
+}
+
+function sketchFace({ emotion, palette, hash, complexity }) {
+    const paper = palette[0];
+    const ink = palette[2];
+    const wobble = hash % 5;
+    const hatch = complexity >= 0.65
+        ? `<path data-axi-part="hatch" d="M34 96 L46 86 M52 101 L68 86 M76 101 L91 86" opacity="0.28"/>`
+        : '';
+
+    return `<rect width="128" height="128" rx="28" fill="${paper}"/>
+  <g fill="none" stroke="${ink}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path data-axi-part="head" d="M32 ${38 + wobble} C48 27 84 28 98 43 C108 60 103 91 88 101 C72 112 43 105 31 91 C20 76 22 51 32 ${38 + wobble}Z" fill="none"/>
+    <g fill="${ink}">${eyesMarkup(emotion)}</g>
+    <g data-axi-part="mouth" fill="none">${mouthPath(emotion)}</g>
+    ${hatch}
+  </g>`;
+}
+
+function emojiFace({ emotion, palette, complexity }) {
+    const background = palette[0];
+    const face = palette[1];
+    const ink = palette[2];
+    const highlight = complexity >= 0.7
+        ? `<ellipse data-axi-part="highlight" cx="48" cy="39" rx="13" ry="7" fill="#ffffff" opacity="0.42"/>`
+        : '';
+
+    return `<rect width="128" height="128" rx="32" fill="${background}"/>
+  <circle data-axi-part="head" cx="64" cy="64" r="44" fill="${face}" stroke="${ink}" stroke-width="5"/>
+  ${highlight}
+  <g fill="${ink}" stroke="${ink}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    ${eyesMarkup(emotion)}
+    <g data-axi-part="mouth" fill="none">${mouthPath(emotion)}</g>
+  </g>`;
+}
+
+function terminalFace({ emotion, palette, hash, complexity }) {
+    const background = palette[0];
+    const accent = palette[1];
+    const ink = palette[2];
+    const scan = complexity >= 0.55
+        ? `<path data-axi-part="scanlines" d="M24 49 H104 M24 70 H104 M24 91 H104" opacity="0.16"/>`
+        : '';
+    const cursor = complexity >= 0.9 || (hash % 3) === 0
+        ? `<rect data-axi-part="cursor" x="84" y="76" width="10" height="5" fill="${accent}" stroke="none"/>`
+        : '';
+
+    return `<rect width="128" height="128" rx="8" fill="${background}"/>
+  <g fill="none" stroke="${accent}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <rect data-axi-part="head" x="20" y="28" width="88" height="76" rx="6" fill="#052e16" stroke="${accent}"/>
+    ${scan}
+    <g fill="${ink}" stroke="${ink}">${eyesMarkup(emotion)}</g>
+    <g data-axi-part="mouth" stroke="${ink}" fill="none">${mouthPath(emotion)}</g>
+    ${cursor}
+  </g>`;
 }
 
 export function generateFaceSvg(options = {}) {
     const seed = String(options.seed || 'axi-face');
     const emotion = normalizeEmotion(options.emotion, 'neutral');
-    const paletteName = String(options.palette || 'default').trim();
-    const palette = PALETTES[paletteName] || PALETTES.default;
-    const hash = hashString(`${seed}:${emotion}:${options.style || ''}`);
-    const background = palette[0];
-    const accent = pick(palette.slice(1), hash);
-    const ink = palette[2];
-    const glow = palette[3] || accent;
-    const antenna = (hash % 2) === 0
-        ? `<path data-axi-part="antenna" d="M64 25 V13" /><circle cx="64" cy="10" r="4" fill="${glow}" />`
-        : '';
+    const style = normalizeStyle(options.style);
+    const complexity = normalizeComplexity(options.complexity);
+    const fallbackPaletteName = style === 'terminal' || style === 'emoji' ? style : 'default';
+    const palette = Array.isArray(options.palette)
+        ? options.palette.map((color) => String(color || '').trim()).filter(Boolean)
+        : getGeneratedFacePalette(options.palette || fallbackPaletteName, fallbackPaletteName);
+    const hash = hashString(`${seed}:${emotion}:${style}:${complexity}`);
+    const renderOptions = { emotion, palette, hash, complexity };
+    const body = {
+        'robot-soft': robotSoftFace,
+        'robot-minimal': robotMinimalFace,
+        sketch: sketchFace,
+        emoji: emojiFace,
+        terminal: terminalFace
+    }[style](renderOptions);
 
     return `<svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AxiFace ${emotion}">
-  <rect width="128" height="128" rx="32" fill="${background}"/>
-  <g fill="none" stroke="${ink}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
-    ${antenna}
-    <rect data-axi-part="head" x="25" y="30" width="78" height="74" rx="24" fill="${accent}" stroke="${ink}"/>
-    <g data-axi-part="left-eye right-eye" fill="${ink}">${eyeMarkup(emotion)}</g>
-    <g data-axi-part="mouth" fill="none">${mouthPath(emotion)}</g>
-    <circle data-axi-part="glow" cx="96" cy="34" r="6" fill="${glow}" stroke="none"/>
-  </g>
+  ${body}
 </svg>`;
 }
 

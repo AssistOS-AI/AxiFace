@@ -32,5 +32,9 @@ test('inline SVG sanitizer rejects scripts and unsafe handlers', () => {
     assert.equal(sanitizeSvgText('<svg><circle cx="1" cy="1" r="1"/></svg>').includes('<svg>'), true);
     assert.throws(() => sanitizeSvgText('<svg><script>alert(1)</script></svg>'), /script/);
     assert.throws(() => sanitizeSvgText('<svg onclick="alert(1)"></svg>'), /event handlers/);
-    assert.throws(() => sanitizeSvgText('<svg><image href="https://example.com/a.png"/></svg>'), /unsafe resources/);
+    assert.throws(() => sanitizeSvgText('<svg><image href="https://example.com/a.png"/></svg>'), /unsupported embedded content/);
+    assert.throws(() => sanitizeSvgText('<svg><foreignObject><div></div></foreignObject></svg>'), /unsupported embedded content/);
+    assert.throws(() => sanitizeSvgText('<svg><style>@import url("https://example.com/a.css")</style></svg>'), /external style imports/);
+    assert.throws(() => sanitizeSvgText('<svg><rect style="fill:url(https://example.com/a.svg)"/></svg>'), /unsafe resources/);
+    assert.doesNotThrow(() => sanitizeSvgText('<svg><defs><linearGradient id="g"/></defs><rect fill="url(#g)"/></svg>'));
 });

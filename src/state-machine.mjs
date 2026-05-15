@@ -20,6 +20,19 @@ export const THOUGHT_MODES = Object.freeze([
     'inside'
 ]);
 
+export const MODES = Object.freeze([
+    'static',
+    'controlled',
+    'event-driven',
+    'autonomous'
+]);
+
+export const THEMES = Object.freeze([
+    'light',
+    'dark',
+    'auto'
+]);
+
 export function normalizeEmotion(value, fallback = 'neutral') {
     const emotion = String(value || '').trim();
     return EMOTIONS.includes(emotion) ? emotion : fallback;
@@ -28,6 +41,16 @@ export function normalizeEmotion(value, fallback = 'neutral') {
 export function normalizeThoughtMode(value, fallback = 'none') {
     const mode = String(value || '').trim();
     return THOUGHT_MODES.includes(mode) ? mode : fallback;
+}
+
+export function normalizeMode(value, fallback = 'static') {
+    const mode = String(value || '').trim();
+    return MODES.includes(mode) ? mode : fallback;
+}
+
+export function normalizeTheme(value, fallback = 'auto') {
+    const theme = String(value || '').trim();
+    return THEMES.includes(theme) ? theme : fallback;
 }
 
 export function normalizeBooleanAttribute(value) {
@@ -56,6 +79,8 @@ export function createInitialState(overrides = {}) {
         speaking: Boolean(overrides.speaking),
         visibleThought: String(overrides.visibleThought || ''),
         thoughtMode: normalizeThoughtMode(overrides.thoughtMode, 'none'),
+        mode: normalizeMode(overrides.mode, 'static'),
+        theme: normalizeTheme(overrides.theme, 'auto'),
         assetMode: String(overrides.assetMode || 'img').trim() === 'inline' ? 'inline' : 'img',
         src: String(overrides.src || '').trim(),
         packSrc: String(overrides.packSrc || '').trim(),
@@ -139,7 +164,9 @@ export class AxiFaceState {
         const assetMode = this.state.assetMode;
         const generated = this.state.generated;
         const animated = this.state.animated;
-        this.state = createInitialState({ agentId, src, packSrc, assetMode, generated, animated });
+        const mode = this.state.mode;
+        const theme = this.state.theme;
+        this.state = createInitialState({ agentId, src, packSrc, mode, theme, assetMode, generated, animated });
         return this.snapshot;
     }
 }

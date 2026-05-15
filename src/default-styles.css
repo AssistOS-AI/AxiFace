@@ -25,4 +25,152 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    background: var(--axi-face-bg);
+}
+
+.frame.circle {
+    border-radius: 999px;
+}
+
+.frame.square {
+    border-radius: 0;
+}
+
+.frame.rounded {
+    border-radius: 12px;
+}
+
+.frame.none {
+    border-radius: 0;
+    overflow: visible;
+}
+
+.root.theme-light {
+    --axi-face-text: #0f172a;
+}
+
+.root.theme-dark {
+    --axi-face-text: #f8fafc;
+}
+
+@media (prefers-color-scheme: dark) {
+    .root.theme-auto {
+        --axi-face-text: #f8fafc;
+    }
+}
+
+img,
+.inline-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+}
+
+.thought {
+    max-width: min(220px, 45vw);
+    font-size: 0.75rem;
+    line-height: 1.25;
+    color: var(--axi-face-text);
+}
+
+.thought-bubble {
+    padding: 0.45rem 0.6rem;
+    border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
+    border-radius: 0.7rem;
+    background: color-mix(in srgb, white 88%, currentColor 12%);
+    box-shadow: 0 10px 28px rgb(15 23 42 / 0.12);
+}
+
+.thought-caption {
+    position: absolute;
+    top: calc(100% + 0.3rem);
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    white-space: nowrap;
+}
+
+.thought-ticker {
+    overflow: hidden;
+    white-space: nowrap;
+    animation: axi-face-ticker 4s linear infinite;
+}
+
+.thought-inside {
+    position: absolute;
+    inset: auto 8% 8% 8%;
+    text-align: center;
+    padding: 0.15rem 0.25rem;
+    border-radius: 0.35rem;
+    background: rgb(255 255 255 / 0.78);
+}
+
+.root.animated .frame {
+    animation: axi-face-idle 4s ease-in-out infinite;
+}
+
+.root.animated.emotion-thinking .frame {
+    animation: axi-face-thinking 1.2s ease-in-out infinite;
+}
+
+.root.animated.emotion-speaking .frame {
+    animation: axi-face-speaking 0.42s ease-in-out infinite;
+}
+
+.pulse {
+    animation: axi-face-pulse 0.7s ease-out 1;
+}
+
+@keyframes axi-face-idle {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-2px);
+    }
+}
+
+@keyframes axi-face-thinking {
+    0%,
+    100% {
+        transform: rotate(-1deg);
+    }
+
+    50% {
+        transform: rotate(1deg);
+    }
+}
+
+@keyframes axi-face-speaking {
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.045);
+    }
+}
+
+@keyframes axi-face-pulse {
+    0% {
+        box-shadow: 0 0 0 0 color-mix(in srgb, currentColor 28%, transparent);
+    }
+
+    100% {
+        box-shadow: 0 0 0 14px transparent;
+    }
+}
+
+@keyframes axi-face-ticker {
+    from {
+        transform: translateX(15%);
+    }
+
+    to {
+        transform: translateX(-15%);
+    }
 }

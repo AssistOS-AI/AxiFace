@@ -35,10 +35,22 @@ export function sanitizeSvgText(svgText) {
     if (/<\s*script\b/i.test(text)) {
         throw new Error('Inline SVG contains a script element.');
     }
+    if (/<\s*(?:foreignObject|iframe|object|embed|audio|video|image)\b/i.test(text)) {
+        throw new Error('Inline SVG contains unsupported embedded content.');
+    }
     if (/\son[a-z]+\s*=/i.test(text)) {
         throw new Error('Inline SVG contains inline event handlers.');
     }
-    if (/\b(?:href|xlink:href|src)\s*=\s*["']\s*(?:https?:|data:|javascript:)/i.test(text)) {
+    if (/@import\b/i.test(text)) {
+        throw new Error('Inline SVG contains external style imports.');
+    }
+    if (/\b(?:href|xlink:href|src)\s*=\s*["']\s*(?:https?:|data:|javascript:|\/\/)/i.test(text)) {
+        throw new Error('Inline SVG contains external or unsafe resources.');
+    }
+    if (/\b(?:href|xlink:href|src)\s*=\s*["']\s*(?!#)[^"']+/i.test(text)) {
+        throw new Error('Inline SVG contains external or unsafe resources.');
+    }
+    if (/url\s*\(\s*["']?\s*(?!#)[^)]+/i.test(text)) {
         throw new Error('Inline SVG contains external or unsafe resources.');
     }
     return text;
