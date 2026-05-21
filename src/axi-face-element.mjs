@@ -1,7 +1,7 @@
 import { loadInlineSvg, loadPackManifest, getPackEmotionSource, resolvePackAssetUrl } from './asset-loader.mjs';
 import { generateFaceDataUrl, generateFaceSvg } from './generated-faces.mjs';
 import { applyInlineSvgBlink, applyInlineSvgExpression } from './svg-controller.mjs';
-import { renderThought } from './thought-renderer.mjs';
+import { escapeHtml, renderThought } from './thought-renderer.mjs';
 import {
     AxiFaceState,
     normalizeBooleanAttribute,
@@ -16,6 +16,7 @@ import {
 const DEFAULT_STYLES_URL = new URL('./default-styles.css', import.meta.url).href;
 const AUTONOMOUS_BLINK_BASE_MS = 2400;
 const AUTONOMOUS_IDLE_BASE_MS = 5200;
+const SHAPES = new Set(['circle', 'square', 'rounded', 'none']);
 
 function hashString(value) {
     let hash = 2166136261;
@@ -24,6 +25,18 @@ function hashString(value) {
         hash = Math.imul(hash, 16777619);
     }
     return hash >>> 0;
+}
+
+function normalizeShape(value, fallback = 'circle') {
+    const shape = String(value || '').trim();
+    return SHAPES.has(shape) ? shape : fallback;
+}
+
+function getGeneratedStyleAttribute(element) {
+    const explicit = String(element.getAttribute('data-axi-style') || element.getAttribute('axi-style') || '').trim();
+    if (explicit) return explicit;
+    const nativeStyle = String(element.getAttribute('style') || '').trim();
+    return nativeStyle && !/[;:]/.test(nativeStyle) ? nativeStyle : 'robot-soft';
 }
 
 export class AxiFaceElement extends HTMLElement {
@@ -44,6 +57,8 @@ export class AxiFaceElement extends HTMLElement {
         'generated',
         'seed',
         'style',
+        'axi-style',
+        'data-axi-style',
         'palette',
         'complexity'
     ];
@@ -134,6 +149,8 @@ export class AxiFaceElement extends HTMLElement {
             'generated',
             'seed',
             'style',
+            'axi-style',
+            'data-axi-style',
             'palette',
             'complexity'
         ].includes(name);
@@ -231,10 +248,10 @@ export class AxiFaceElement extends HTMLElement {
     render() {
         const state = this.machine.snapshot;
         const size = normalizeSize(this.getAttribute('size'), '48px');
-        const shape = String(this.getAttribute('shape') || 'circle').trim() || 'circle';
+        const shape = normalizeShape(this.getAttribute('shape'), 'circle');
         const generatedSrc = generateFaceDataUrl({
             seed: this.getAttribute('seed') || state.agentId || 'axi-face',
-            style: this.getAttribute('style') || 'robot-soft',
+            style: getGeneratedStyleAttribute(this),
             palette: this.getAttribute('palette') || 'default',
             complexity: this.getAttribute('complexity') || '',
             emotion: state.emotion
@@ -242,7 +259,7 @@ export class AxiFaceElement extends HTMLElement {
         const source = state.generated || !state.src ? generatedSrc : state.src;
         const asset = state.assetMode === 'inline' && state.src
             ? '<span data-role="asset"></span>'
-            : `<img data-role="asset" src="${source}" alt="" part="image">`;
+            : `<img data-role="asset" src="${escapeHtml(source)}" alt="" part="image">`;
         this.style.setProperty('--axi-face-size', size);
         const animationClass = state.animated ? 'animated' : '';
         const rootClasses = [
@@ -253,7 +270,7 @@ export class AxiFaceElement extends HTMLElement {
             `theme-${state.theme}`
         ].filter(Boolean).join(' ');
         this.shadowRoot.innerHTML = `
-            <link rel="stylesheet" href="${DEFAULT_STYLES_URL}">
+            <link rel="stylesheet" href="${escapeHtml(DEFAULT_STYLES_URL)}">
             <div class="${rootClasses}" part="root">
                 <span class="frame ${shape}" part="frame">${asset}</span>
                 ${renderThought(state.visibleThought, state.thoughtMode)}
@@ -465,7 +482,7 @@ export class AxiFaceElement extends HTMLElement {
     get generatedSvg() {
         return generateFaceSvg({
             seed: this.getAttribute('seed') || this.machine.state.agentId || 'axi-face',
-            style: this.getAttribute('style') || 'robot-soft',
+            style: getGeneratedStyleAttribute(this),
             palette: this.getAttribute('palette') || 'default',
             complexity: this.getAttribute('complexity') || '',
             emotion: this.machine.state.emotion

@@ -216,3 +216,21 @@ test('autonomous mode does not keep timers while speaking', async () => {
         globalThis.clearTimeout = originalClearTimeout;
     }
 });
+
+test('generated style supports data-axi-style when native style carries CSS', async () => {
+    globalThis.window = {
+        addEventListener() {},
+        removeEventListener() {}
+    };
+
+    const { AxiFaceElement } = await import('../src/axi-face-element.mjs');
+    const element = new AxiFaceElement();
+    element.setAttribute('generated', '');
+    element.setAttribute('style', '--axi-face-size: 72px;');
+    element.setAttribute('data-axi-style', 'sketch');
+
+    const svg = element.generatedSvg;
+
+    assert.equal(svg.includes('data-axi-part="hatch"') || svg.includes('C48 27'), true);
+    assert.equal(svg.includes('<rect data-axi-part="head" x="25"'), false);
+});

@@ -34,6 +34,7 @@ Supported attributes:
 - `generated`
 - `seed`
 - `style`
+- `data-axi-style` as the integration-safe generated style alias when the native HTML `style` attribute is needed for CSS declarations
 - `palette`
 - `complexity`
 
@@ -128,6 +129,8 @@ Included internal asset packs are:
 Each pack must include SVG assets for every stable emotion.
 
 Generated faces must be deterministic for a given `seed`, `emotion`, `style`, `palette`, and `complexity`. Supported generated styles are `robot-soft`, `robot-minimal`, `sketch`, `emoji`, and `terminal`.
+
+Applications should use the document-defined `style` attribute when it is only used as an AxiFace option. If an integration also needs native CSS inline styles on the host element, it must pass the generated face style through `data-axi-style` or `axi-style`; AxiFace treats those aliases as higher priority than the native `style` attribute.
 
 Generated face palettes live in `generated-face-config.mjs`, not inside the renderer implementation. Consumers may register additional named palettes through `registerGeneratedFacePalette(name, colors)` and then use them through the `palette` attribute.
 

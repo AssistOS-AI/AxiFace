@@ -13,7 +13,13 @@ import "@axiologic/axi-face";
 During local development, import the module directly:
 
 ```html
-<script type="module" src="../src/axi-face.mjs"></script>
+<script type="module" src="../axi-face.mjs"></script>
+```
+
+When installed in an application, the direct package path is:
+
+```html
+<script type="module" src="/node_modules/@axiologic/axi-face/axi-face.mjs"></script>
 ```
 
 ## Basic Usage
@@ -116,6 +122,18 @@ registerGeneratedFacePalette("brand", [
 
 ```html
 <axi-face generated palette="brand"></axi-face>
+```
+
+The generated style is configured with the design-document `style` attribute:
+
+```html
+<axi-face generated style="sketch" seed="assistant"></axi-face>
+```
+
+When the host also needs the native HTML `style` attribute for CSS custom properties, use `data-axi-style` for the generated face style:
+
+```html
+<axi-face generated data-axi-style="sketch" style="--axi-face-size: 72px"></axi-face>
 ```
 
 Supported methods:
