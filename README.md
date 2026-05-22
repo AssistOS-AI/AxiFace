@@ -194,3 +194,35 @@ Each pack has a manifest and SVGs for `neutral`, `idle`, `listening`, `thinking`
 ## Asset Sources
 
 This package ships only minimal internal SVG assets. DiceBear/Bottts, Open Peeps, OpenMoji, and Twemoji may be useful for future asset packs, but their licenses must be reviewed before redistribution or modification.
+
+## Attribution / Licenses
+
+Avatars generated using DiceBear (https://www.dicebear.com/)  and OpenMoji (https://openmoji.org/).
+See full license details: https://www.dicebear.com/licenses/
+
+
+**Emoji simple classic**
+
+Source: https://openmoji.org/library/
+License: Creative Commons Attribution-ShareAlike 4.0 (CC BY-SA 4.0)
+License link: https://creativecommons.org/licenses/by-sa/4.0/
+
+
+**Emoji simple brown** 
+
+Source: https://www.dicebear.com/playground/
+License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+License link: https://creativecommons.org/licenses/by/4.0/
+
+**Emoji simple colors**
+
+Source: https://www.dicebear.com/playground/
+License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+License link: https://creativecommons.org/licenses/by/4.0/
+
+
+
+
+
+
+
