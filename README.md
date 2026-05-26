@@ -201,26 +201,31 @@ Avatars generated using DiceBear (https://www.dicebear.com/)  and OpenMoji (http
 See full license details: https://www.dicebear.com/licenses/
 
 
-**Emoji simple classic**
+**Emoji  classic**
 
 Source: https://openmoji.org/library/
 License: Creative Commons Attribution-ShareAlike 4.0 (CC BY-SA 4.0)
 License link: https://creativecommons.org/licenses/by-sa/4.0/
 
 
-**Emoji simple brown** 
+**Emoji brown** 
 
 Source: https://www.dicebear.com/playground/
 License: Creative Commons Attribution 4.0 International (CC BY 4.0)
 License link: https://creativecommons.org/licenses/by/4.0/
 
-**Emoji simple colors**
+**Emoji colors**
 
 Source: https://www.dicebear.com/playground/
 License: Creative Commons Attribution 4.0 International (CC BY 4.0)
 License link: https://creativecommons.org/licenses/by/4.0/
 
 
+**Robot-minimal**
+
+Source: https://www.dicebear.com/styles/bottts-neutral
+License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+License link: https://creativecommons.org/licenses/by/4.0/
 
 
 
