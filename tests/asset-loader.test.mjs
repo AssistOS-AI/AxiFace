@@ -4,6 +4,7 @@ import test from 'node:test';
 import {
     getPackEmotionSource,
     loadPackManifest,
+    loadInlineSvg,
     sanitizeSvgText
 } from '../src/asset-loader.mjs';
 
@@ -26,6 +27,43 @@ test('loads a pack manifest through injected fetch', async () => {
         json: async () => manifest
     }));
     assert.deepEqual(loaded, manifest);
+});
+
+test('reuses the same pack manifest promise for repeated URLs', async () => {
+    const manifest = { defaultEmotion: 'neutral', emotions: { neutral: 'neutral.svg' } };
+    let fetchCount = 0;
+    const fetchImpl = async () => {
+        fetchCount += 1;
+        return {
+            ok: true,
+            json: async () => manifest
+        };
+    };
+    const [first, second] = await Promise.all([
+        loadPackManifest('/manifest-cache-test.json', fetchImpl),
+        loadPackManifest('/manifest-cache-test.json', fetchImpl)
+    ]);
+    assert.deepEqual(first, manifest);
+    assert.deepEqual(second, manifest);
+    assert.equal(fetchCount, 1);
+});
+
+test('reuses the same inline SVG payload for repeated URLs', async () => {
+    let fetchCount = 0;
+    const fetchImpl = async () => {
+        fetchCount += 1;
+        return {
+            ok: true,
+            text: async () => '<svg><circle cx="1" cy="1" r="1"/></svg>'
+        };
+    };
+    const [first, second] = await Promise.all([
+        loadInlineSvg('/inline-cache-test.svg', fetchImpl),
+        loadInlineSvg('/inline-cache-test.svg', fetchImpl)
+    ]);
+    assert.match(first, /<svg>/);
+    assert.equal(second, first);
+    assert.equal(fetchCount, 1);
 });
 
 test('inline SVG sanitizer rejects scripts and unsafe handlers', () => {

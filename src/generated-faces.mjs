@@ -87,42 +87,30 @@ function symbolMarkup(fill = 'currentColor') {
 }
 
 function robotSoftFace({ emotion, palette, hash, complexity }) {
-    const background = palette[0];
-    const accent = pick(palette.slice(1), hash);
     const ink = palette[2];
-    const glow = palette[3] || accent;
     const antenna = complexity >= 0.55 && (hash % 2) === 0
-        ? `<path data-axi-part="antenna" d="M64 25 V13" /><circle cx="64" cy="10" r="4" fill="${glow}" />`
-        : '';
-    const cheek = complexity >= 0.85
-        ? `<circle cx="37" cy="70" r="4" fill="${glow}" stroke="none" opacity="0.55"/><circle cx="91" cy="70" r="4" fill="${glow}" stroke="none" opacity="0.55"/>`
+        ? '<path data-axi-part="antenna" d="M64 25 V13" /><circle cx="64" cy="10" r="4" fill="none" />'
         : '';
 
-    return `<rect width="128" height="128" rx="32" fill="${background}"/>
-  ${symbolMarkup(ink)}
+    return `${symbolMarkup(ink)}
   <g fill="none" stroke="${ink}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
     ${antenna}
-    <rect data-axi-part="head" x="25" y="30" width="78" height="74" rx="24" fill="${accent}" stroke="${ink}"/>
+    <rect data-axi-part="head" x="25" y="30" width="78" height="74" rx="24" fill="none" stroke="${ink}"/>
     ${browsMarkup(emotion)}
     <g fill="${ink}">${eyesMarkup(emotion)}</g>
     <g data-axi-part="mouth" fill="none">${mouthPath(emotion)}</g>
-    ${cheek}
-    <circle data-axi-part="glow" cx="96" cy="34" r="6" fill="${glow}" stroke="none"/>
   </g>`;
 }
 
 function robotMinimalFace({ emotion, palette, complexity }) {
-    const background = palette[0];
-    const accent = palette[1];
     const ink = palette[2];
     const detail = complexity >= 0.75
         ? `<path data-axi-part="detail" d="M43 38 H85" opacity="0.45"/>`
         : '';
 
-    return `<rect width="128" height="128" rx="18" fill="${background}"/>
-  ${symbolMarkup(ink)}
+    return `${symbolMarkup(ink)}
   <g fill="none" stroke="${ink}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
-    <rect data-axi-part="head" x="28" y="35" width="72" height="64" rx="14" fill="${accent}" stroke="${ink}"/>
+    <rect data-axi-part="head" x="28" y="35" width="72" height="64" rx="14" fill="none" stroke="${ink}"/>
     ${detail}
     ${browsMarkup(emotion)}
     <g fill="${ink}">${eyesMarkup(emotion)}</g>
@@ -131,15 +119,13 @@ function robotMinimalFace({ emotion, palette, complexity }) {
 }
 
 function sketchFace({ emotion, palette, hash, complexity }) {
-    const paper = palette[0];
     const ink = palette[2];
     const wobble = hash % 5;
     const hatch = complexity >= 0.65
         ? `<path data-axi-part="hatch" d="M34 96 L46 86 M52 101 L68 86 M76 101 L91 86" opacity="0.28"/>`
         : '';
 
-    return `<rect width="128" height="128" rx="28" fill="${paper}"/>
-  ${symbolMarkup(ink)}
+    return `${symbolMarkup(ink)}
   <g fill="none" stroke="${ink}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
     <path data-axi-part="head" d="M32 ${38 + wobble} C48 27 84 28 98 43 C108 60 103 91 88 101 C72 112 43 105 31 91 C20 76 22 51 32 ${38 + wobble}Z" fill="none"/>
     ${browsMarkup(emotion)}
@@ -150,17 +136,9 @@ function sketchFace({ emotion, palette, hash, complexity }) {
 }
 
 function emojiFace({ emotion, palette, complexity }) {
-    const background = palette[0];
-    const face = palette[1];
     const ink = palette[2];
-    const highlight = complexity >= 0.7
-        ? `<ellipse data-axi-part="highlight" cx="48" cy="39" rx="13" ry="7" fill="#ffffff" opacity="0.42"/>`
-        : '';
-
-    return `<rect width="128" height="128" rx="32" fill="${background}"/>
-  <circle data-axi-part="head" cx="64" cy="64" r="44" fill="${face}" stroke="${ink}" stroke-width="5"/>
-  ${highlight}
-  ${symbolMarkup(ink)}
+    return `${symbolMarkup(ink)}
+  <circle data-axi-part="head" cx="64" cy="64" r="44" fill="none" stroke="${ink}" stroke-width="5"/>
   <g fill="${ink}" stroke="${ink}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
     ${browsMarkup(emotion)}
     ${eyesMarkup(emotion)}
@@ -169,20 +147,18 @@ function emojiFace({ emotion, palette, complexity }) {
 }
 
 function terminalFace({ emotion, palette, hash, complexity }) {
-    const background = palette[0];
     const accent = palette[1];
     const ink = palette[2];
     const scan = complexity >= 0.55
         ? `<path data-axi-part="scanlines" d="M24 49 H104 M24 70 H104 M24 91 H104" opacity="0.16"/>`
         : '';
     const cursor = complexity >= 0.9 || (hash % 3) === 0
-        ? `<rect data-axi-part="cursor" x="84" y="76" width="10" height="5" fill="${accent}" stroke="none"/>`
+        ? '<path data-axi-part="cursor" d="M84 78 H94" opacity="0.75"/>'
         : '';
 
-    return `<rect width="128" height="128" rx="8" fill="${background}"/>
-  ${symbolMarkup(ink)}
+    return `${symbolMarkup(ink)}
   <g fill="none" stroke="${accent}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
-    <rect data-axi-part="head" x="20" y="28" width="88" height="76" rx="6" fill="#052e16" stroke="${accent}"/>
+    <rect data-axi-part="head" x="20" y="28" width="88" height="76" rx="6" fill="none" stroke="${accent}"/>
     ${scan}
     ${browsMarkup(emotion)}
     <g fill="${ink}" stroke="${ink}">${eyesMarkup(emotion)}</g>

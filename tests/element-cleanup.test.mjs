@@ -234,3 +234,22 @@ test('generated style supports data-axi-style when native style carries CSS', as
     assert.equal(svg.includes('data-axi-part="hatch"') || svg.includes('C48 27'), true);
     assert.equal(svg.includes('<rect data-axi-part="head" x="25"'), false);
 });
+
+test('generated palette accepts a JSON color array attribute', async () => {
+    globalThis.window = {
+        addEventListener() {},
+        removeEventListener() {}
+    };
+
+    const { AxiFaceElement } = await import('../src/axi-face-element.mjs');
+    const element = new AxiFaceElement();
+    element.setAttribute('generated', '');
+    element.setAttribute('data-axi-style', 'terminal');
+    element.setAttribute('palette', '["#111827","#ec4899","#f8fafc","#22d3ee"]');
+
+    const svg = element.generatedSvg;
+
+    assert.equal(svg.includes('<rect width="128" height="128"'), false);
+    assert.match(svg, /#ec4899|#22d3ee|#f8fafc/);
+    assert.equal(svg.includes('fill="#052e16"'), false);
+});

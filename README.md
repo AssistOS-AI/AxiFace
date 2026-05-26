@@ -124,6 +124,12 @@ registerGeneratedFacePalette("brand", [
 <axi-face generated palette="brand"></axi-face>
 ```
 
+Integrations that need to preserve a one-off color scheme across serialization boundaries may also pass a JSON palette array through the `palette` attribute:
+
+```html
+<axi-face generated palette='["#101010","#ff0066","#f8fafc","#00d1ff"]'></axi-face>
+```
+
 The generated style is configured with the design-document `style` attribute:
 
 ```html
@@ -226,7 +232,6 @@ License link: https://creativecommons.org/licenses/by/4.0/
 Source: https://www.dicebear.com/styles/bottts-neutral
 License: Creative Commons Attribution 4.0 International (CC BY 4.0)
 License link: https://creativecommons.org/licenses/by/4.0/
-
 
 
 

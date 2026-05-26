@@ -132,7 +132,7 @@ Generated faces must be deterministic for a given `seed`, `emotion`, `style`, `p
 
 Applications should use the document-defined `style` attribute when it is only used as an AxiFace option. If an integration also needs native CSS inline styles on the host element, it must pass the generated face style through `data-axi-style` or `axi-style`; AxiFace treats those aliases as higher priority than the native `style` attribute.
 
-Generated face palettes live in `generated-face-config.mjs`, not inside the renderer implementation. Consumers may register additional named palettes through `registerGeneratedFacePalette(name, colors)` and then use them through the `palette` attribute.
+Generated face palettes live in `generated-face-config.mjs`, not inside the renderer implementation. Consumers may register additional named palettes through `registerGeneratedFacePalette(name, colors)` and then use them through the `palette` attribute. Integrations that serialize generated faces through HTML must also be able to pass an explicit palette array by encoding JSON in the `palette` attribute; the element parses that array and preserves the supplied colors instead of falling back to the default named palette.
 
 ## Events
 

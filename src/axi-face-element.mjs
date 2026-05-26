@@ -39,6 +39,27 @@ function getGeneratedStyleAttribute(element) {
     return nativeStyle && !/[;:]/.test(nativeStyle) ? nativeStyle : 'robot-soft';
 }
 
+function getGeneratedPaletteAttribute(element) {
+    const raw = String(element.getAttribute('palette') || '').trim();
+    if (!raw) return 'default';
+    if (raw.startsWith('[')) {
+        try {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) {
+                const normalized = parsed
+                    .map((entry) => String(entry || '').trim())
+                    .filter(Boolean);
+                if (normalized.length >= 3) {
+                    return normalized;
+                }
+            }
+        } catch (_) {
+            // Fall back to named palette handling below.
+        }
+    }
+    return raw;
+}
+
 export class AxiFaceElement extends HTMLElement {
     static observedAttributes = [
         'agent-id',
@@ -78,6 +99,10 @@ export class AxiFaceElement extends HTMLElement {
         this.destroyed = false;
         this.handleCommand = (event) => this.onCommand(event);
         this.handleClick = () => this.emit('axi-face:clicked', { state: this.machine.snapshot });
+        this.shadowRoot.innerHTML = `
+            <link rel="stylesheet" href="${escapeHtml(DEFAULT_STYLES_URL)}">
+            <div data-role="render-host"></div>
+        `;
         this.render();
     }
 
@@ -249,10 +274,14 @@ export class AxiFaceElement extends HTMLElement {
         const state = this.machine.snapshot;
         const size = normalizeSize(this.getAttribute('size'), '48px');
         const shape = normalizeShape(this.getAttribute('shape'), 'circle');
+        const renderHost = this.shadowRoot.querySelector('[data-role="render-host"]');
+        if (!renderHost) {
+            return;
+        }
         const generatedSrc = generateFaceDataUrl({
             seed: this.getAttribute('seed') || state.agentId || 'axi-face',
             style: getGeneratedStyleAttribute(this),
-            palette: this.getAttribute('palette') || 'default',
+            palette: getGeneratedPaletteAttribute(this),
             complexity: this.getAttribute('complexity') || '',
             emotion: state.emotion
         });
@@ -269,8 +298,7 @@ export class AxiFaceElement extends HTMLElement {
             `mode-${state.mode}`,
             `theme-${state.theme}`
         ].filter(Boolean).join(' ');
-        this.shadowRoot.innerHTML = `
-            <link rel="stylesheet" href="${escapeHtml(DEFAULT_STYLES_URL)}">
+        renderHost.innerHTML = `
             <div class="${rootClasses}" part="root">
                 <span class="frame ${shape}" part="frame">${asset}</span>
                 ${renderThought(state.visibleThought, state.thoughtMode)}
@@ -483,7 +511,7 @@ export class AxiFaceElement extends HTMLElement {
         return generateFaceSvg({
             seed: this.getAttribute('seed') || this.machine.state.agentId || 'axi-face',
             style: getGeneratedStyleAttribute(this),
-            palette: this.getAttribute('palette') || 'default',
+            palette: getGeneratedPaletteAttribute(this),
             complexity: this.getAttribute('complexity') || '',
             emotion: this.machine.state.emotion
         });

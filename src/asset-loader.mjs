@@ -10,18 +10,34 @@ export function resolvePackAssetUrl(packSrc, assetPath) {
     return resolveRelativeUrl(base, assetPath);
 }
 
+const packManifestCache = new Map();
+const inlineSvgCache = new Map();
+
 export async function loadPackManifest(packSrc, fetchImpl = globalThis.fetch) {
     if (!packSrc) throw new Error('Missing pack-src.');
     if (typeof fetchImpl !== 'function') throw new Error('Fetch is unavailable.');
-    const response = await fetchImpl(packSrc);
-    if (!response?.ok) {
-        throw new Error(`Unable to load AxiFace pack manifest: ${response?.status || 'unknown'}`);
+    const cacheKey = String(packSrc);
+    if (packManifestCache.has(cacheKey)) {
+        return packManifestCache.get(cacheKey);
     }
-    const manifest = await response.json();
-    if (!manifest || typeof manifest !== 'object') {
-        throw new Error('Invalid AxiFace pack manifest.');
-    }
-    return manifest;
+    const loadPromise = Promise.resolve()
+        .then(() => fetchImpl(packSrc))
+        .then(async (response) => {
+            if (!response?.ok) {
+                throw new Error(`Unable to load AxiFace pack manifest: ${response?.status || 'unknown'}`);
+            }
+            const manifest = await response.json();
+            if (!manifest || typeof manifest !== 'object') {
+                throw new Error('Invalid AxiFace pack manifest.');
+            }
+            return manifest;
+        })
+        .catch((error) => {
+            packManifestCache.delete(cacheKey);
+            throw error;
+        });
+    packManifestCache.set(cacheKey, loadPromise);
+    return loadPromise;
 }
 
 export function getPackEmotionSource(manifest, emotion) {
@@ -59,9 +75,22 @@ export function sanitizeSvgText(svgText) {
 export async function loadInlineSvg(src, fetchImpl = globalThis.fetch) {
     if (!src) throw new Error('Missing SVG source.');
     if (typeof fetchImpl !== 'function') throw new Error('Fetch is unavailable.');
-    const response = await fetchImpl(src);
-    if (!response?.ok) {
-        throw new Error(`Unable to load inline SVG: ${response?.status || 'unknown'}`);
+    const cacheKey = String(src);
+    if (inlineSvgCache.has(cacheKey)) {
+        return inlineSvgCache.get(cacheKey);
     }
-    return sanitizeSvgText(await response.text());
+    const loadPromise = Promise.resolve()
+        .then(() => fetchImpl(src))
+        .then(async (response) => {
+            if (!response?.ok) {
+                throw new Error(`Unable to load inline SVG: ${response?.status || 'unknown'}`);
+            }
+            return sanitizeSvgText(await response.text());
+        })
+        .catch((error) => {
+            inlineSvgCache.delete(cacheKey);
+            throw error;
+        });
+    inlineSvgCache.set(cacheKey, loadPromise);
+    return loadPromise;
 }
