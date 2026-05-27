@@ -208,31 +208,39 @@ See full license details: https://www.dicebear.com/licenses/
 
 
 **Emoji  classic**
-
 Source: https://openmoji.org/library/
-License: Creative Commons Attribution-ShareAlike 4.0 (CC BY-SA 4.0)
-License link: https://creativecommons.org/licenses/by-sa/4.0/
+License URL: https://creativecommons.org/licenses/by-sa/4.0/
 
 
 **Emoji brown** 
-
 Source: https://www.dicebear.com/playground/
-License: Creative Commons Attribution 4.0 International (CC BY 4.0)
-License link: https://creativecommons.org/licenses/by/4.0/
+License URL: https://creativecommons.org/licenses/by/4.0/
 
 **Emoji colors**
-
 Source: https://www.dicebear.com/playground/
-License: Creative Commons Attribution 4.0 International (CC BY 4.0)
-License link: https://creativecommons.org/licenses/by/4.0/
+License URL: https://creativecommons.org/licenses/by/4.0/
 
 
 **Robot-minimal**
-
 Source: https://www.dicebear.com/styles/bottts-neutral
-License: Creative Commons Attribution 4.0 International (CC BY 4.0)
-License link: https://creativecommons.org/licenses/by/4.0/
+License URL: https://bottts.com/
 
 
+**Robot-soft-classic and Robot-soft-colors**
+Source: https://www.dicebear.com/styles/bottts
+License URL: https://bottts.com/
+
+
+**Sketch-expressive**
+Source: https://www.dicebear.com/styles/lorelei/
+License URL: https://creativecommons.org/publicdomain/zero/1.0/
+
+**Sketch-flat**
+Source: https://www.dicebear.com/styles/notionists-neutral/
+License URL: https://creativecommons.org/publicdomain/zero/1.0/
+
+**Sketch-rounded**
+Source: https://www.dicebear.com/styles/lorelei-neutral/
+License URL: https://creativecommons.org/publicdomain/zero/1.0/
 
 
