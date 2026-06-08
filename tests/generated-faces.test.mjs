@@ -45,6 +45,21 @@ test('generated face palettes are configurable', () => {
     assert.equal(Object.hasOwn(listGeneratedFacePalettes(), 'brand'), false);
 });
 
+test('generated face palettes visibly affect non-terminal styles', () => {
+    registerGeneratedFacePalette('brand-accent', ['#101010', '#ff0066', '#f8fafc', '#00d1ff']);
+
+    const robot = generateFaceSvg({ seed: 'brand-agent', emotion: 'happy', palette: 'brand-accent', style: 'robot-soft' });
+    const minimal = generateFaceSvg({ seed: 'brand-agent', emotion: 'happy', palette: 'brand-accent', style: 'robot-minimal' });
+    const sketch = generateFaceSvg({ seed: 'brand-agent', emotion: 'happy', palette: 'brand-accent', style: 'sketch', complexity: 'high' });
+    const emoji = generateFaceSvg({ seed: 'brand-agent', emotion: 'happy', palette: 'brand-accent', style: 'emoji' });
+
+    assert.equal(robot.includes('#ff0066'), true);
+    assert.equal(minimal.includes('#ff0066'), true);
+    assert.equal(sketch.includes('#ff0066'), true);
+    assert.equal(emoji.includes('#ff0066'), true);
+    assert.equal(unregisterGeneratedFacePalette('brand-accent'), true);
+});
+
 test('generated faces render without a filled background tile', () => {
     const svg = generateFaceSvg({ seed: 'agent', emotion: 'neutral', style: 'robot-soft' });
     assert.doesNotMatch(svg, /<rect width="128" height="128"/);

@@ -1,6 +1,6 @@
 :host {
     --axi-face-size: 48px;
-    --axi-face-bg: transparent;
+    --axi-face-bg: #F8F8F8;
     --axi-face-text: #0f172a;
     display: inline-flex;
     align-items: center;
@@ -43,6 +43,7 @@
 .frame.none {
     border-radius: 0;
     overflow: visible;
+    background: transparent;
 }
 
 .root.theme-light {

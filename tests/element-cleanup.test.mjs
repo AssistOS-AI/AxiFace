@@ -1,5 +1,12 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import test from 'node:test';
+
+test('shape none removes the frame background', async () => {
+    const css = await fs.readFile(path.resolve(import.meta.dirname, '../src/default-styles.css'), 'utf8');
+    assert.match(css, /\.frame\.none\s*\{[\s\S]*background:\s*transparent;/);
+});
 
 test('element destroy removes global listeners and timers', async () => {
     const listenerCalls = [];

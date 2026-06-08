@@ -87,15 +87,16 @@ function symbolMarkup(fill = 'currentColor') {
 }
 
 function robotSoftFace({ emotion, palette, hash, complexity }) {
+    const accent = palette[1];
     const ink = palette[2];
     const antenna = complexity >= 0.55 && (hash % 2) === 0
-        ? '<path data-axi-part="antenna" d="M64 25 V13" /><circle cx="64" cy="10" r="4" fill="none" />'
+        ? `<g stroke="${accent}"><path data-axi-part="antenna" d="M64 25 V13" /><circle cx="64" cy="10" r="4" fill="none" /></g>`
         : '';
 
     return `${symbolMarkup(ink)}
   <g fill="none" stroke="${ink}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
     ${antenna}
-    <rect data-axi-part="head" x="25" y="30" width="78" height="74" rx="24" fill="none" stroke="${ink}"/>
+    <rect data-axi-part="head" x="25" y="30" width="78" height="74" rx="24" fill="none" stroke="${accent}"/>
     ${browsMarkup(emotion)}
     <g fill="${ink}">${eyesMarkup(emotion)}</g>
     <g data-axi-part="mouth" fill="none">${mouthPath(emotion)}</g>
@@ -103,31 +104,33 @@ function robotSoftFace({ emotion, palette, hash, complexity }) {
 }
 
 function robotMinimalFace({ emotion, palette, complexity }) {
+    const accent = palette[1];
     const ink = palette[2];
     const detail = complexity >= 0.75
-        ? `<path data-axi-part="detail" d="M43 38 H85" opacity="0.45"/>`
+        ? `<path data-axi-part="detail" d="M43 38 H85" stroke="${ink}" opacity="0.45"/>`
         : '';
 
     return `${symbolMarkup(ink)}
-  <g fill="none" stroke="${ink}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
-    <rect data-axi-part="head" x="28" y="35" width="72" height="64" rx="14" fill="none" stroke="${ink}"/>
+  <g fill="none" stroke="${accent}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <rect data-axi-part="head" x="28" y="35" width="72" height="64" rx="14" fill="none" stroke="${accent}"/>
     ${detail}
-    ${browsMarkup(emotion)}
-    <g fill="${ink}">${eyesMarkup(emotion)}</g>
-    <g data-axi-part="mouth" fill="none">${mouthPath(emotion)}</g>
+    <g stroke="${ink}">${browsMarkup(emotion)}</g>
+    <g fill="${ink}" stroke="${ink}">${eyesMarkup(emotion)}</g>
+    <g data-axi-part="mouth" stroke="${ink}" fill="none">${mouthPath(emotion)}</g>
   </g>`;
 }
 
 function sketchFace({ emotion, palette, hash, complexity }) {
+    const accent = palette[1];
     const ink = palette[2];
     const wobble = hash % 5;
     const hatch = complexity >= 0.65
-        ? `<path data-axi-part="hatch" d="M34 96 L46 86 M52 101 L68 86 M76 101 L91 86" opacity="0.28"/>`
+        ? `<path data-axi-part="hatch" d="M34 96 L46 86 M52 101 L68 86 M76 101 L91 86" stroke="${accent}" opacity="0.55"/>`
         : '';
 
     return `${symbolMarkup(ink)}
   <g fill="none" stroke="${ink}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
-    <path data-axi-part="head" d="M32 ${38 + wobble} C48 27 84 28 98 43 C108 60 103 91 88 101 C72 112 43 105 31 91 C20 76 22 51 32 ${38 + wobble}Z" fill="none"/>
+    <path data-axi-part="head" d="M32 ${38 + wobble} C48 27 84 28 98 43 C108 60 103 91 88 101 C72 112 43 105 31 91 C20 76 22 51 32 ${38 + wobble}Z" fill="none" stroke="${accent}"/>
     ${browsMarkup(emotion)}
     <g fill="${ink}">${eyesMarkup(emotion)}</g>
     <g data-axi-part="mouth" fill="none">${mouthPath(emotion)}</g>
@@ -136,9 +139,10 @@ function sketchFace({ emotion, palette, hash, complexity }) {
 }
 
 function emojiFace({ emotion, palette, complexity }) {
+    const accent = palette[1];
     const ink = palette[2];
     return `${symbolMarkup(ink)}
-  <circle data-axi-part="head" cx="64" cy="64" r="44" fill="none" stroke="${ink}" stroke-width="5"/>
+  <circle data-axi-part="head" cx="64" cy="64" r="44" fill="none" stroke="${accent}" stroke-width="5"/>
   <g fill="${ink}" stroke="${ink}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
     ${browsMarkup(emotion)}
     ${eyesMarkup(emotion)}
