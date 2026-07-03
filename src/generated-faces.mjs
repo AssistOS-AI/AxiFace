@@ -35,6 +35,10 @@ function normalizeComplexity(value) {
 
 function mouthPath(emotion) {
     switch (normalizeEmotion(emotion)) {
+    case 'idle':
+        return '<path d="M50 79 H78" opacity="0.85" />';
+    case 'listening':
+        return '<path d="M51 79 Q64 83 77 79" />';
     case 'happy':
     case 'amused':
         return '<path d="M45 75 Q64 91 83 75" />';
@@ -54,6 +58,10 @@ function mouthPath(emotion) {
 
 function eyesMarkup(emotion) {
     switch (normalizeEmotion(emotion)) {
+    case 'idle':
+        return '<g data-axi-part="left-eye"><path d="M38 56 H52" /></g><g data-axi-part="right-eye"><path d="M76 56 H90" /></g>';
+    case 'listening':
+        return '<g data-axi-part="left-eye"><circle cx="45" cy="55" r="5" /></g><g data-axi-part="right-eye"><circle cx="83" cy="55" r="7" /></g>';
     case 'sleepy':
         return '<g data-axi-part="left-eye"><path d="M37 55 H52" /></g><g data-axi-part="right-eye"><path d="M76 55 H91" /></g>';
     case 'thinking':
@@ -67,6 +75,10 @@ function eyesMarkup(emotion) {
 
 function browsMarkup(emotion) {
     switch (normalizeEmotion(emotion)) {
+    case 'idle':
+        return '<g data-axi-part="brow-left"><path d="M36 46 H52" opacity="0.7" /></g><g data-axi-part="brow-right"><path d="M76 46 H92" opacity="0.7" /></g>';
+    case 'listening':
+        return '<g data-axi-part="brow-left"><path d="M36 41 Q44 38 52 41" /></g><g data-axi-part="brow-right"><path d="M76 41 Q84 38 92 41" /></g>';
     case 'confused':
         return '<g data-axi-part="brow-left"><path d="M36 42 L52 39" /></g><g data-axi-part="brow-right"><path d="M76 39 L92 43" /></g>';
     case 'concerned':
@@ -86,6 +98,16 @@ function symbolMarkup(fill = 'currentColor') {
     return `<text data-axi-part="symbol" x="64" y="31" text-anchor="middle" font-family="ui-sans-serif, system-ui, sans-serif" font-size="16" font-weight="800" fill="${fill}" stroke="none" opacity="0"></text>`;
 }
 
+function listeningCueMarkup(emotion, accent) {
+    if (normalizeEmotion(emotion) !== 'listening') {
+        return '';
+    }
+    return `<g data-axi-part="listening-cue" stroke="${accent}" stroke-width="4" opacity="0.9" fill="none">
+    <path d="M18 55 Q10 64 18 73" />
+    <path d="M110 55 Q118 64 110 73" />
+  </g>`;
+}
+
 function robotSoftFace({ emotion, palette, hash, complexity }) {
     const accent = palette[1];
     const ink = palette[2];
@@ -100,6 +122,7 @@ function robotSoftFace({ emotion, palette, hash, complexity }) {
     ${browsMarkup(emotion)}
     <g fill="${ink}">${eyesMarkup(emotion)}</g>
     <g data-axi-part="mouth" fill="none">${mouthPath(emotion)}</g>
+    ${listeningCueMarkup(emotion, accent)}
   </g>`;
 }
 
@@ -117,6 +140,7 @@ function robotMinimalFace({ emotion, palette, complexity }) {
     <g stroke="${ink}">${browsMarkup(emotion)}</g>
     <g fill="${ink}" stroke="${ink}">${eyesMarkup(emotion)}</g>
     <g data-axi-part="mouth" stroke="${ink}" fill="none">${mouthPath(emotion)}</g>
+    ${listeningCueMarkup(emotion, accent)}
   </g>`;
 }
 
@@ -135,6 +159,7 @@ function sketchFace({ emotion, palette, hash, complexity }) {
     <g fill="${ink}">${eyesMarkup(emotion)}</g>
     <g data-axi-part="mouth" fill="none">${mouthPath(emotion)}</g>
     ${hatch}
+    ${listeningCueMarkup(emotion, accent)}
   </g>`;
 }
 
@@ -147,6 +172,7 @@ function emojiFace({ emotion, palette, complexity }) {
     ${browsMarkup(emotion)}
     ${eyesMarkup(emotion)}
     <g data-axi-part="mouth" fill="none">${mouthPath(emotion)}</g>
+    ${listeningCueMarkup(emotion, accent)}
   </g>`;
 }
 
@@ -168,6 +194,7 @@ function terminalFace({ emotion, palette, hash, complexity }) {
     <g fill="${ink}" stroke="${ink}">${eyesMarkup(emotion)}</g>
     <g data-axi-part="mouth" stroke="${ink}" fill="none">${mouthPath(emotion)}</g>
     ${cursor}
+    ${listeningCueMarkup(emotion, accent)}
   </g>`;
 }
 
