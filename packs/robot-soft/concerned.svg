@@ -3,7 +3,7 @@
   <text data-axi-part="symbol" x="64" y="31" text-anchor="middle" font-family="ui-sans-serif, system-ui, sans-serif" font-size="16" font-weight="800" fill="#0f172a" stroke="none" opacity="0"></text>
   <g fill="none" stroke="#0f172a" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
     <path data-axi-part="antenna" d="M64 25 V13" /><circle cx="64" cy="10" r="4" fill="#38bdf8" />
-    <rect data-axi-part="head" x="25" y="30" width="78" height="74" rx="24" fill="#0f172a" stroke="#0f172a"/>
+    <rect data-axi-part="head" x="25" y="30" width="78" height="74" rx="24" fill="#2563eb" stroke="#0f172a"/>
     <g data-axi-part="brow-left"><path d="M36 41 L52 46" /></g><g data-axi-part="brow-right"><path d="M76 46 L92 41" /></g>
     <g fill="#0f172a"><g data-axi-part="left-eye"><circle cx="45" cy="55" r="6" /></g><g data-axi-part="right-eye"><circle cx="83" cy="55" r="6" /></g></g>
     <g data-axi-part="mouth" fill="none"><path d="M47 83 Q64 70 81 83" /></g>

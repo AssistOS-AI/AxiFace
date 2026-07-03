@@ -4,8 +4,8 @@
   <g fill="none" stroke="#0f172a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
     <rect data-axi-part="head" x="28" y="35" width="72" height="64" rx="14" fill="#475569" stroke="#0f172a"/>
     <path data-axi-part="detail" d="M43 38 H85" opacity="0.45"/>
-    <g data-axi-part="brow-left"><path d="M36 43 H52" /></g><g data-axi-part="brow-right"><path d="M76 43 H92" /></g>
-    <g fill="#0f172a"><g data-axi-part="left-eye"><circle cx="45" cy="55" r="6" /></g><g data-axi-part="right-eye"><circle cx="83" cy="55" r="6" /></g></g>
-    <g data-axi-part="mouth" fill="none"><path d="M48 78 Q64 84 80 78" /></g>
+    <g data-axi-part="brow-left"><path d="M36 46 H52" opacity="0.7"/></g><g data-axi-part="brow-right"><path d="M76 46 H92" opacity="0.7"/></g>
+    <g fill="#0f172a"><g data-axi-part="left-eye"><path d="M38 56 H52" /></g><g data-axi-part="right-eye"><path d="M76 56 H90" /></g></g>
+    <g data-axi-part="mouth" fill="none"><path d="M50 79 H78" opacity="0.85"/></g>
   </g>
 </svg>

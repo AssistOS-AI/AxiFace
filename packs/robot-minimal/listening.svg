@@ -4,8 +4,12 @@
   <g fill="none" stroke="#0f172a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
     <rect data-axi-part="head" x="28" y="35" width="72" height="64" rx="14" fill="#475569" stroke="#0f172a"/>
     <path data-axi-part="detail" d="M43 38 H85" opacity="0.45"/>
-    <g data-axi-part="brow-left"><path d="M36 43 H52" /></g><g data-axi-part="brow-right"><path d="M76 43 H92" /></g>
-    <g fill="#0f172a"><g data-axi-part="left-eye"><circle cx="45" cy="55" r="6" /></g><g data-axi-part="right-eye"><circle cx="83" cy="55" r="6" /></g></g>
-    <g data-axi-part="mouth" fill="none"><path d="M48 78 Q64 84 80 78" /></g>
+    <g data-axi-part="brow-left"><path d="M36 41 Q44 38 52 41" /></g><g data-axi-part="brow-right"><path d="M76 41 Q84 38 92 41" /></g>
+    <g fill="#0f172a"><g data-axi-part="left-eye"><circle cx="45" cy="55" r="5" /></g><g data-axi-part="right-eye"><circle cx="83" cy="55" r="7" /></g></g>
+    <g data-axi-part="mouth" fill="none"><path d="M51 79 Q64 83 77 79" /></g>
+    <g data-axi-part="listening-cue" stroke="#38bdf8" stroke-width="4" opacity="0.9">
+      <path d="M18 55 Q10 64 18 73" />
+      <path d="M110 55 Q118 64 110 73" />
+    </g>
   </g>
 </svg>
