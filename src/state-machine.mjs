@@ -1,13 +1,10 @@
 export const EMOTIONS = Object.freeze([
     'neutral',
-    'idle',
     'listening',
     'thinking',
     'speaking',
     'happy',
-    'amused',
     'confused',
-    'concerned',
     'alert',
     'sleepy'
 ]);

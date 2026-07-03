@@ -195,7 +195,7 @@ The package includes original internal SVG packs:
 - `packs/sketch-simple`
 - `packs/emoji-simple`
 
-Each pack has a manifest and SVGs for `neutral`, `idle`, `listening`, `thinking`, `speaking`, `happy`, `amused`, `confused`, `concerned`, `alert`, and `sleepy`.
+Each pack has a manifest and SVGs for `neutral`, `listening`, `thinking`, `speaking`, `happy`, `confused`, `alert`, and `sleepy`.
 
 ## Asset Sources
 
@@ -242,5 +242,4 @@ License URL: https://creativecommons.org/publicdomain/zero/1.0/
 **Sketch-rounded**
 Source: https://www.dicebear.com/styles/lorelei-neutral/
 License URL: https://creativecommons.org/publicdomain/zero/1.0/
-
 

@@ -35,16 +35,12 @@ function normalizeComplexity(value) {
 
 function mouthPath(emotion) {
     switch (normalizeEmotion(emotion)) {
-    case 'idle':
-        return '<path d="M50 79 H78" opacity="0.85" />';
     case 'listening':
         return '<path d="M51 79 Q64 83 77 79" />';
     case 'happy':
-    case 'amused':
         return '<path d="M45 75 Q64 91 83 75" />';
     case 'confused':
         return '<path d="M48 78 Q58 71 66 78 T82 78" />';
-    case 'concerned':
     case 'alert':
         return '<path d="M47 83 Q64 70 81 83" />';
     case 'speaking':
@@ -58,8 +54,6 @@ function mouthPath(emotion) {
 
 function eyesMarkup(emotion) {
     switch (normalizeEmotion(emotion)) {
-    case 'idle':
-        return '<g data-axi-part="left-eye"><path d="M38 56 H52" /></g><g data-axi-part="right-eye"><path d="M76 56 H90" /></g>';
     case 'listening':
         return '<g data-axi-part="left-eye"><circle cx="45" cy="55" r="5" /></g><g data-axi-part="right-eye"><circle cx="83" cy="55" r="7" /></g>';
     case 'sleepy':
@@ -75,17 +69,13 @@ function eyesMarkup(emotion) {
 
 function browsMarkup(emotion) {
     switch (normalizeEmotion(emotion)) {
-    case 'idle':
-        return '<g data-axi-part="brow-left"><path d="M36 46 H52" opacity="0.7" /></g><g data-axi-part="brow-right"><path d="M76 46 H92" opacity="0.7" /></g>';
     case 'listening':
         return '<g data-axi-part="brow-left"><path d="M36 41 Q44 38 52 41" /></g><g data-axi-part="brow-right"><path d="M76 41 Q84 38 92 41" /></g>';
     case 'confused':
         return '<g data-axi-part="brow-left"><path d="M36 42 L52 39" /></g><g data-axi-part="brow-right"><path d="M76 39 L92 43" /></g>';
-    case 'concerned':
     case 'alert':
         return '<g data-axi-part="brow-left"><path d="M36 41 L52 46" /></g><g data-axi-part="brow-right"><path d="M76 46 L92 41" /></g>';
     case 'happy':
-    case 'amused':
         return '<g data-axi-part="brow-left"><path d="M36 42 Q44 37 52 42" /></g><g data-axi-part="brow-right"><path d="M76 42 Q84 37 92 42" /></g>';
     case 'sleepy':
         return '<g data-axi-part="brow-left"><path d="M36 47 H52" /></g><g data-axi-part="brow-right"><path d="M76 47 H92" /></g>';

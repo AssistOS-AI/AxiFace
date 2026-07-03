@@ -3,26 +3,13 @@ import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
 import { getPackEmotionSource } from '../src/asset-loader.mjs';
+import { EMOTIONS } from '../src/state-machine.mjs';
 
 const PACKS = Object.freeze([
     'robot-soft',
     'robot-minimal',
     'sketch-simple',
     'emoji-simple'
-]);
-
-const EMOTIONS = Object.freeze([
-    'neutral',
-    'idle',
-    'listening',
-    'thinking',
-    'speaking',
-    'happy',
-    'amused',
-    'confused',
-    'concerned',
-    'alert',
-    'sleepy'
 ]);
 
 async function readPackManifest(packId) {

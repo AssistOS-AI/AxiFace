@@ -18,13 +18,6 @@ const EXPRESSION_TRANSFORMS = Object.freeze({
         glow: '1',
         symbol: ''
     },
-    idle: {
-        eyes: 'translateY(1px) scaleY(0.92)',
-        mouth: 'translateY(0) scaleY(0.92)',
-        brows: 'translateY(1px) rotate(0deg)',
-        glow: '0.72',
-        symbol: ''
-    },
     listening: {
         eyes: 'translateY(-1px) scaleY(1.06)',
         mouth: 'translateY(0) scaleY(0.75)',
@@ -53,26 +46,12 @@ const EXPRESSION_TRANSFORMS = Object.freeze({
         glow: '1',
         symbol: '✓'
     },
-    amused: {
-        eyes: 'translateY(-1px) scaleY(0.72)',
-        mouth: 'translateY(-2px) scaleY(1.12)',
-        brows: 'translateY(-2px) rotate(8deg)',
-        glow: '1',
-        symbol: '•'
-    },
     confused: {
         eyes: 'translateY(0) scaleY(1)',
         mouth: 'translateY(1px) scaleY(0.8)',
         brows: 'translateY(-1px) rotate(-12deg)',
         glow: '0.86',
         symbol: '?'
-    },
-    concerned: {
-        eyes: 'translateY(1px) scaleY(0.88)',
-        mouth: 'translateY(2px) scaleY(0.9)',
-        brows: 'translateY(1px) rotate(10deg)',
-        glow: '0.78',
-        symbol: '!'
     },
     alert: {
         eyes: 'translateY(-2px) scaleY(1.24)',

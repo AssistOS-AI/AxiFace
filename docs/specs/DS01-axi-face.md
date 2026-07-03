@@ -57,14 +57,11 @@ Supported methods:
 The stable emotion set is:
 
 - `neutral`
-- `idle`
 - `listening`
 - `thinking`
 - `speaking`
 - `happy`
-- `amused`
 - `confused`
-- `concerned`
 - `alert`
 - `sleepy`
 
